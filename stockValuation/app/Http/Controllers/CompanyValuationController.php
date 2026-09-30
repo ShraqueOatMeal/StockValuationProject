@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\UserDcfScenario;
 use App\Services\Valuation\DcfCalculator;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -11,31 +14,30 @@ class CompanyValuationController
 {
     public function show(string $ticker): Response
     {
-        $company = Company::with([
-            'latestValuation',
-            'quarterlyFinancials' => function ($query) {
-                $query->orderBy('period_end_date', 'asc');
-            },
-        ])->where('ticker', strtoupper($ticker))->firstOrFail();
+        $ticker = strtoupper($ticker);
 
+        // 1. Fetch Company along with its latest daily valuation mart and quarterly financials
+        $company = Company::with([
+            'latestValuation', // points to gold.fact_daily_market_valuation
+            'quarterlyFinancials' => fn ($query) => $query->orderBy('period_end_date', 'asc'), // points to gold.fact_quarterly_financials
+        ])->where('ticker', $ticker)->firstOrFail();
+
+        $latestVal = $company->latestValuation;
         $financials = $company->quarterlyFinancials;
         $latestFinancial = $financials->last();
-        $latestVal = $company->latestValuation;
 
-        // Use Trailing Twelve Months (TTM) or last available 4 quarters of FCF
-        $ttmFcf = (float) ($financials->take(-4)->sum('free_cash_flow') ?: ($latestFinancial?->free_cash_flow ?? 1e9));
-        $cash = (float) ($latestFinancial?->cash_and_cash_equivalents ?? 0);
-        $debt = (float) ($latestFinancial?->total_liabilities ?? 0);
+        // 2. DCF Inputs: Read pre-calculated TTM FCF and balance sheet numbers directly
+        $currentPrice = (float) ($latestVal?->close_price ?? 0);
+        $sharesOutstanding = (float) ($latestVal?->shares_outstanding ?? 1e9);
+        $baseFcf = (float) ($latestVal?->ttm_fcf ?? $latestFinancial?->free_cash_flow ?? 5e9);
+        $cash = (float) ($latestVal?->cash_and_cash_equivalents ?? 0);
+        $debt = (float) ($latestVal?->total_liabilities ?? 0);
 
-        // Approximate shares outstanding from market data or use safe baseline
-        $currentPrice = (float) ($latestVal?->close_price ?? 100.0);
-        $sharesOutstanding = 1e9; // 1 Billion shares baseline default
-
-        $defaults = [
-            'base_fcf' => $ttmFcf > 0 ? $ttmFcf : 5e9,
-            'growth_stage_1' => 0.10, // 10% annual 5-year growth
-            'terminal_growth' => 0.025, // 2.5% long-run GDP rate
-            'wacc' => 0.085, // 8.5% discount rate
+        $dcfDefaults = [
+            'base_fcf' => $baseFcf > 0 ? $baseFcf : 5e9,
+            'growth_stage_1' => 0.10,
+            'terminal_growth' => 0.025,
+            'wacc' => 0.085,
             'cash' => $cash,
             'total_debt' => $debt,
             'shares_outstanding' => $sharesOutstanding,
@@ -43,27 +45,94 @@ class CompanyValuationController
         ];
 
         $initialValuation = DcfCalculator::calculate(
-            $defaults['base_fcf'],
-            $defaults['growth_stage_1'],
-            $defaults['terminal_growth'],
-            $defaults['wacc'],
-            $defaults['cash'],
-            $defaults['total_debt'],
-            $defaults['shares_outstanding']
+            $dcfDefaults['base_fcf'],
+            $dcfDefaults['growth_stage_1'],
+            $dcfDefaults['terminal_growth'],
+            $dcfDefaults['wacc'],
+            $dcfDefaults['cash'],
+            $dcfDefaults['total_debt'],
+            $dcfDefaults['shares_outstanding']
         );
 
-        $historicalStatements = $financials->map(fn($f) => [
+        // 3. Multiples: Pass through directly from fact_daily_market_valuation
+        $multiples = [
+            'market_cap' => (float) ($latestVal?->market_cap ?? 0),
+            'enterprise_value' => (float) ($latestVal?->enterprise_value ?? 0),
+            'ttm_revenue' => (float) ($latestVal?->ttm_revenue ?? 0),
+            'ttm_net_income' => (float) ($latestVal?->ttm_net_income ?? 0),
+            'ttm_fcf' => (float) ($latestVal?->ttm_fcf ?? 0),
+            'pe_ratio' => $latestVal?->pe_ratio ? (float) $latestVal->pe_ratio : null,
+            'p_fcf_ratio' => $latestVal?->p_fcf_ratio ? (float) $latestVal->p_fcf_ratio : null,
+            'ev_sales_ratio' => $latestVal?->ev_sales_ratio ? (float) $latestVal->ev_sales_ratio : null,
+            'ev_ebit_ratio' => $latestVal?->ev_ebit_ratio ? (float) $latestVal->ev_ebit_ratio : null,
+        ];
+
+        // 4. Historical Statements: Line items and margins already computed in fact_quarterly_financials
+        $historical = $financials->map(fn ($f) => [
             'period' => $f->fiscal_year . ' ' . $f->fiscal_period,
-            'period_end_date' => $f->period_end_date?->format('Y-m-d'),
-            'revenue' => (float) $f->total_revenue,
-            'operating_income' => (float) $f->operating_income,
-            'net_income' => (float) $f->net_income,
-            'free_cash_flow' => (float) $f->free_cash_flow,
-            'operating_cash_flow' => (float) $f->operating_cash_flow,
-            'capital_expenditures' => (float) $f->capital_expenditures,
-            'net_margin' => $f->net_margin ? round($f->net_margin * 100, 2) : 0,
-            'roe' => $f->return_on_equity ? round($f->return_on_equity * 100, 2) : 0,
+            'period_end_date' => $f->period_end_date ? $f->period_end_date->format('M d, Y') : '—',
+            'revenue' => (float) ($f->total_revenue ?? 0),
+            'revenue_yoy' => $f->revenue_yoy_growth !== null ? (float) $f->revenue_yoy_growth : null,
+            'gross_profit' => (float) ($f->gross_profit ?? 0),
+            'gross_margin' => (float) ($f->gross_margin ?? 0),
+            'operating_income' => (float) ($f->operating_income ?? 0),
+            'operating_margin' => (float) ($f->operating_margin ?? 0),
+            'net_income' => (float) ($f->net_income ?? 0),
+            'net_margin' => (float) ($f->net_margin ?? 0),
+            'cash_and_equivalents' => (float) ($f->cash_and_cash_equivalents ?? 0),
+            'total_assets' => (float) ($f->total_assets ?? 0),
+            'total_liabilities' => (float) ($f->total_liabilities ?? 0),
+            'stockholders_equity' => (float) ($f->stockholders_equity ?? 0),
+            'debt_to_equity' => (float) ($f->debt_to_equity ?? 0),
+            'operating_cash_flow' => (float) ($f->operating_cash_flow ?? 0),
+            'capital_expenditures' => (float) ($f->capital_expenditures ?? 0),
+            'free_cash_flow' => (float) ($f->free_cash_flow ?? 0),
+            'fcf_conversion' => $f->fcf_conversion !== null ? (float) $f->fcf_conversion : null,
         ]);
+
+        // 5. Peer Group: Multiples read directly from peer records in fact_daily_market_valuation
+        $peerCompanies = Company::with('latestValuation')
+            ->where('industry', $company->industry)
+            ->where('ticker', '!=', $ticker)
+            ->limit(8)
+            ->get();
+
+        $peers = $peerCompanies->map(fn ($p) => [
+            'ticker' => $p->ticker,
+            'name' => $p->company_name,
+            'price' => (float) ($p->latestValuation?->close_price ?? 0),
+            'market_cap' => (float) ($p->latestValuation?->market_cap ?? 0),
+            'pe' => $p->latestValuation?->pe_ratio ? (float) $p->latestValuation->pe_ratio : null,
+            'p_fcf' => $p->latestValuation?->p_fcf_ratio ? (float) $p->latestValuation->p_fcf_ratio : null,
+            'ev_sales' => $p->latestValuation?->ev_sales_ratio ? (float) $p->latestValuation->ev_sales_ratio : null,
+            'ev_ebit' => $p->latestValuation?->ev_ebit_ratio ? (float) $p->latestValuation->ev_ebit_ratio : null,
+            'net_margin' => (float) ($p->latestValuation?->net_margin ? $p->latestValuation->net_margin * 100 : 0),
+        ]);
+
+        // 6. Sector Median Benchmarks
+        $calculateMedian = function (array $values): ?float {
+            $filtered = array_values(array_filter($values, fn ($v) => ! is_null($v) && $v > 0));
+            $count = count($filtered);
+            if ($count === 0) return null;
+            sort($filtered);
+            $mid = (int) floor($count / 2);
+            return $count % 2 === 0
+                ? round(($filtered[$mid - 1] + $filtered[$mid]) / 2, 2)
+                : round($filtered[$mid], 2);
+        };
+
+        $industryBenchmarks = [
+            'median_pe' => $calculateMedian($peers->pluck('pe')->all()),
+            'median_p_fcf' => $calculateMedian($peers->pluck('p_fcf')->all()),
+            'median_ev_sales' => $calculateMedian($peers->pluck('ev_sales')->all()),
+            'median_ev_ebit' => $calculateMedian($peers->pluck('ev_ebit')->all()),
+        ];
+
+        // 7. Saved Scenarios (defaulted to user_id = 1 for personal analytical workstation)
+        $savedScenarios = UserDcfScenario::where('user_id', 1)
+            ->where('ticker', $ticker)
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
         return Inertia::render('companies/show', [
             'company' => [
@@ -77,9 +146,40 @@ class CompanyValuationController
                 'sma_20' => $latestVal?->sma_20,
                 'sma_50' => $latestVal?->sma_50,
             ],
-            'historical' => $historicalStatements,
-            'dcf_defaults' => $defaults,
+            'historical' => $historical,
+            'dcf_defaults' => $dcfDefaults,
             'initial_valuation' => $initialValuation,
+            'saved_scenarios' => $savedScenarios,
+            'multiples' => $multiples,
+            'peers' => $peers,
+            'industry_benchmarks' => $industryBenchmarks,
         ]);
+    }
+
+    public function storeScenario(Request $request, string $ticker): RedirectResponse
+    {
+        $validated = $request->validate([
+            'scenario_name' => 'required|string|max:50',
+            'base_fcf' => 'required|numeric',
+            'growth_stage_1' => 'required|numeric',
+            'terminal_growth' => 'required|numeric',
+            'wacc' => 'required|numeric',
+            'cash_and_equivalents' => 'required|numeric',
+            'total_debt' => 'required|numeric',
+            'shares_outstanding' => 'required|numeric',
+            'calculated_fair_value' => 'required|numeric',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        UserDcfScenario::updateOrCreate(
+            [
+                'user_id' => 1,
+                'ticker' => strtoupper($ticker),
+                'scenario_name' => $validated['scenario_name'],
+            ],
+            $validated
+        );
+
+        return back()->with('success', "Scenario '{$validated['scenario_name']}' saved.");
     }
 }

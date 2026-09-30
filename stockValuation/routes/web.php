@@ -10,5 +10,6 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [ValuationDashboardController::class, 'index'])->name('dashboard');
 Route::get('/companies/{ticker}', [CompanyValuationController::class, 'show'])->name('companies.show');
+Route::post('/companies/{ticker}/scenarios', [CompanyValuationController::class, 'storeScenario'])->name('companies.scenarios.store');
 
 require __DIR__.'/settings.php';

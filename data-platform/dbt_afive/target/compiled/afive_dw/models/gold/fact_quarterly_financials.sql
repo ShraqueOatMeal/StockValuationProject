@@ -29,7 +29,14 @@ pivoted as (
 
         -- Cash Flow Statement Line Items
         max(case when gaap_tag = 'NetCashProvidedByUsedInOperatingActivities' then amount end) as operating_cash_flow,
-        max(case when gaap_tag = 'PaymentsToAcquirePropertyPlantAndEquipment' then amount end) as capital_expenditures
+        max(case when gaap_tag = 'PaymentsToAcquirePropertyPlantAndEquipment' then amount end) as capital_expenditures,
+
+        -- Share Count Line Item
+        max(case when gaap_tag in (
+            'EntityCommonStockSharesOutstanding',
+            'CommonStockSharesOutstanding',
+            'WeightedAverageNumberOfDilutedSharesOutstanding'
+        ) then amount end) as shares_outstanding
     from scd2_current
     group by ticker, cik, fiscal_year, fiscal_period
 ),
@@ -56,6 +63,7 @@ ratios as (
         cash_and_cash_equivalents,
         operating_cash_flow,
         capital_expenditures,
+        shares_outstanding,
 
         -- Derived Free Cash Flow
         (coalesce(operating_cash_flow, 0) - coalesce(capital_expenditures, 0)) as free_cash_flow,
@@ -68,6 +76,36 @@ ratios as (
         round(current_assets / nullif(current_liabilities, 0), 4) as current_ratio,
         current_timestamp as computed_at
     from pivoted
+),
+
+with_ttm as (
+  select
+    r.*,
+
+    -- 4-Quarter Rolling TTM sums
+    sum(total_revenue) over w_ttm as ttm_revenue,
+    sum(operating_income) over w_ttm as ttm_operating_income,
+    sum(net_income) over w_ttm as ttm_net_income,
+    sum(free_cash_flow) over w_ttm as ttm_fcf,
+    sum(operating_cash_flow) over w_ttm as ttm_operating_cash_flow,
+
+    -- YoY Quarter Comparison (same quarter 1 year ago)
+    lag(total_revenue, 4) over w_ticker as prev_year_revenue,
+    round(
+      ((total_revenue - lag(total_revenue, 4) over w_ticker) / nullif(lag(total_revenue, 4) over w_ticker, 0)) * 100,
+      2
+    ) as revenue_yoy_growth
+  from ratios r
+  window
+    w_ttm as (
+      partition by ticker
+      order by period_end_date
+      rows between 3 preceding and current row
+    ),
+    w_ticker as (
+      partition by ticker
+      order by period_end_date
+    )
 )
 
-select * from ratios
+select * from with_ttm
