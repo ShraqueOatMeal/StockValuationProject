@@ -1,0 +1,24 @@
+[project]
+name = "data-platform"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "ShraqueOatMeal", email = "lohyenkuan@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "dbt-postgres>=1.11.0",
+    "pandas>=3.0.6",
+    "psycopg2-binary>=2.9.13",
+    "requests>=2.34.2",
+    "tenacity>=9.1.4",
+    "yfinance>=1.7.0",
+]
+
+[project.scripts]
+data-platform = "data_platform:main"
+
+[build-system]
+requires = ["uv_build>=0.12.9,<0.13.0"]
+build-backend = "uv_build"

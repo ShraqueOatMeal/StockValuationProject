@@ -1,0 +1,20 @@
+[2026-09-30T03:40:08.157+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-09-30T03:40:08.169+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dag_market_eod.ingest_sec_NOW manual__2026-09-30T03:40:01.939932+00:00 [queued]>
+[2026-09-30T03:40:08.173+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dag_market_eod.ingest_sec_NOW manual__2026-09-30T03:40:01.939932+00:00 [queued]>
+[2026-09-30T03:40:08.173+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-09-30T03:40:08.180+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): ingest_sec_NOW> on 2026-09-30 03:40:01.939932+00:00
+[2026-09-30T03:40:08.185+0000] {standard_task_runner.py:64} INFO - Started process 292 to run task
+[2026-09-30T03:40:08.187+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dag_market_eod', 'ingest_sec_NOW', 'manual__2026-09-30T03:40:01.939932+00:00', '--job-id', '18', '--raw', '--subdir', 'DAGS_FOLDER/dag_market_eod.py', '--cfg-path', '/tmp/tmpr740vaj8']
+[2026-09-30T03:40:08.188+0000] {standard_task_runner.py:91} INFO - Job 18: Subtask ingest_sec_NOW
+[2026-09-30T03:40:08.221+0000] {task_command.py:426} INFO - Running <TaskInstance: dag_market_eod.ingest_sec_NOW manual__2026-09-30T03:40:01.939932+00:00 [running]> on host ba8db4610040
+[2026-09-30T03:40:08.278+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afive' AIRFLOW_CTX_DAG_ID='dag_market_eod' AIRFLOW_CTX_TASK_ID='ingest_sec_NOW' AIRFLOW_CTX_EXECUTION_DATE='2026-09-30T03:40:01.939932+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-09-30T03:40:01.939932+00:00'
+[2026-09-30T03:40:08.279+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-09-30T03:40:08.285+0000] {logging_mixin.py:188} INFO - Fetching SEC XBRL facts for NOW (CIK: 0001373715)...
+[2026-09-30T03:40:08.660+0000] {logging_mixin.py:188} INFO - Successfully landed SEC facts payload for NOW
+[2026-09-30T03:40:08.663+0000] {logging_mixin.py:188} INFO - Refreshed SEC XBRL disclosure for NOW
+[2026-09-30T03:40:08.663+0000] {python.py:237} INFO - Done. Returned value was: None
+[2026-09-30T03:40:08.663+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-09-30T03:40:08.671+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=dag_market_eod, task_id=ingest_sec_NOW, run_id=manual__2026-09-30T03:40:01.939932+00:00, execution_date=20260930T034001, start_date=20260930T034008, end_date=20260930T034008
+[2026-09-30T03:40:08.719+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-09-30T03:40:08.732+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-09-30T03:40:08.733+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

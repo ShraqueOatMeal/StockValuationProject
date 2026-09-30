@@ -1,0 +1,25 @@
+version: 2
+
+sources:
+  - name: bronze
+    schema: bronze
+    tables:
+      - name: raw_market_prices
+        description: "Raw daily OHLCV prices, volume, dividends, and stock splits from Yahoo Finance."
+        columns:
+          - name: ticker
+            tests:
+              - not_null
+          - name: trade_date
+            tests:
+              - not_null
+
+      - name: raw_sec_filings
+        description: "Raw JSONB XBRL company facts pulled from SEC EDGAR API."
+        columns:
+          - name: cik
+            tests:
+              - not_null
+          - name: form_type
+            tests:
+              - not_null

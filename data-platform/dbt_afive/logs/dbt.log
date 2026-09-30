@@ -1,0 +1,1966 @@
+[0m11:51:01.228463 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09b8a9a120>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09ba902710>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09b7493890>]}
+
+
+============================== 11:51:01.250466 | 203197ee-347c-4b86-80dc-f989cf087a52 ==============================
+[0m11:51:01.250466 [info ] [MainThread]: Running with dbt=1.12.5
+[0m11:51:01.250926 [debug] [MainThread]: running dbt with arguments {'send_anonymous_usage_stats': 'True', 'log_path': '/home/lohyenkuan/Coding/StockValuationProject/data-platform/dbt_afive/logs', 'hints_enabled': 'True', 'use_experimental_parser': 'False', 'static_parser': 'True', 'empty': 'None', 'target_path': 'None', 'partial_parse': 'True', 'printer_width': '80', 'no_print': 'None', 'fail_fast': 'False', 'warn_error': 'None', 'invocation_command': 'dbt debug --profiles-dir .', 'profiles_dir': '.', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'write_json': 'True', 'cache_selected_only': 'False', 'maximum_seed_size_mib': '1', 'indirect_selection': 'eager', 'log_format': 'default', 'log_cache_events': 'False', 'quiet': 'False', 'introspect': 'True', 'debug': 'False', 'use_colors': 'True', 'version_check': 'True'}
+[0m11:51:01.340189 [info ] [MainThread]: dbt version: 1.12.5
+[0m11:51:01.340594 [info ] [MainThread]: python version: 3.14.7
+[0m11:51:01.340882 [info ] [MainThread]: python path: /home/lohyenkuan/Coding/StockValuationProject/data-platform/.venv/bin/python
+[0m11:51:01.341149 [info ] [MainThread]: os info: Linux-7.2.5-3-omarchy-x86_64-with-glibc2.44
+[0m11:51:01.380993 [info ] [MainThread]: Using profiles dir at .
+[0m11:51:01.381386 [info ] [MainThread]: Using profiles.yml file at ./profiles.yml
+[0m11:51:01.381669 [info ] [MainThread]: Using dbt_project.yml file at /home/lohyenkuan/Coding/StockValuationProject/data-platform/dbt_afive/dbt_project.yml
+[0m11:51:01.382123 [info ] [MainThread]: adapter type: postgres
+[0m11:51:01.382412 [info ] [MainThread]: adapter version: 1.11.0
+[0m11:51:01.449101 [info ] [MainThread]: Configuration:
+[0m11:51:01.449623 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m11:51:01.449941 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m11:51:01.450225 [info ] [MainThread]: Required dependencies:
+[0m11:51:01.450510 [debug] [MainThread]: Executing "git --help"
+[0m11:51:01.452201 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone      Clone a repository into a new directory\n   init       Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add        Add file contents to the index\n   mv         Move or rename a file, a directory, or a symlink\n   restore    Restore working tree files\n   rm         Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect     Use binary search to find the commit that introduced a bug\n   diff       Show changes between commits, commit and working tree, etc\n   grep       Print lines matching a pattern\n   log        Show commit logs\n   show       Show various types of objects\n   status     Show the working tree status\n\ngrow, mark and tweak your common history\n   backfill   Download missing objects in a partial clone\n   branch     List, create, or delete branches\n   commit     Record changes to the repository\n   history    EXPERIMENTAL: Rewrite history\n   merge      Join two or more development histories together\n   rebase     Reapply commits on top of another base tip\n   reset      Set `HEAD` or the index to a known state\n   switch     Switch branches\n   tag        Create, list, delete or verify tags\n\ncollaborate (see also: git help workflows)\n   fetch      Download objects and refs from another repository\n   pull       Fetch from and integrate with another repository or a local branch\n   push       Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m11:51:01.452565 [debug] [MainThread]: STDERR: "b''"
+[0m11:51:01.452848 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m11:51:01.453112 [info ] [MainThread]: Connection:
+[0m11:51:01.453367 [info ] [MainThread]:   host: 127.0.0.1
+[0m11:51:01.453598 [info ] [MainThread]:   port: 5432
+[0m11:51:01.453838 [info ] [MainThread]:   user: afive_admin
+[0m11:51:01.454078 [info ] [MainThread]:   database: afive_dw
+[0m11:51:01.454306 [info ] [MainThread]:   schema: public
+[0m11:51:01.454546 [info ] [MainThread]:   connect_timeout: 10
+[0m11:51:01.454787 [info ] [MainThread]:   role: None
+[0m11:51:01.455022 [info ] [MainThread]:   search_path: None
+[0m11:51:01.455248 [info ] [MainThread]:   keepalives_idle: 0
+[0m11:51:01.455479 [info ] [MainThread]:   sslmode: None
+[0m11:51:01.455703 [info ] [MainThread]:   sslcert: None
+[0m11:51:01.455936 [info ] [MainThread]:   sslkey: None
+[0m11:51:01.456148 [info ] [MainThread]:   sslrootcert: None
+[0m11:51:01.456363 [info ] [MainThread]:   application_name: dbt
+[0m11:51:01.456586 [info ] [MainThread]:   autocommit: False
+[0m11:51:01.456835 [info ] [MainThread]:   retries: 1
+[0m11:51:01.457184 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m11:51:01.487317 [debug] [MainThread]: Acquiring new postgres connection 'debug'
+[0m11:51:01.508405 [debug] [MainThread]: Using postgres connection "debug"
+[0m11:51:01.508818 [debug] [MainThread]: On debug: select 1 as id
+[0m11:51:01.509087 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m11:51:01.518658 [debug] [MainThread]: SQL status: SELECT 1 in 0.009 seconds
+[0m11:51:01.519674 [debug] [MainThread]: On debug: Close
+[0m11:51:01.520157 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m11:51:01.520666 [info ] [MainThread]: [32mAll checks passed![0m
+[0m11:51:01.521553 [debug] [MainThread]: Resource report: {"command_name": "debug", "command_success": true, "command_wall_clock_time": 0.3422648, "process_in_blocks": "20560", "process_kernel_time": 0.165277, "process_mem_max_rss": "156920", "process_out_blocks": "44312", "process_user_time": 2.247035}
+[0m11:51:01.522337 [debug] [MainThread]: Command `dbt debug` succeeded at 11:51:01.522224 after 0.34 seconds
+[0m11:51:01.522658 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m11:51:01.522961 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09b68843e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09b7290ef0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7d09b6e96360>]}
+[0m11:51:01.523289 [debug] [MainThread]: Flushing usage events
+[0m11:51:02.862859 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:58:00.631996 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066225ba3c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x706624154f50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x706620c37890>]}
+
+
+============================== 11:58:00.634936 | 1e01f560-e6d3-43fa-98f1-54ef288e67f6 ==============================
+[0m11:58:00.634936 [info ] [MainThread]: Running with dbt=1.12.5
+[0m11:58:00.635523 [debug] [MainThread]: running dbt with arguments {'profiles_dir': 'dbt_afive', 'no_print': 'None', 'log_format': 'default', 'hints_enabled': 'True', 'fail_fast': 'False', 'quiet': 'False', 'log_path': 'dbt_afive/logs', 'indirect_selection': 'eager', 'invocation_command': 'dbt run --project-dir dbt_afive --profiles-dir dbt_afive --select stg_market_prices silver_market_prices', 'introspect': 'True', 'target_path': 'None', 'empty': 'False', 'use_experimental_parser': 'False', 'partial_parse': 'True', 'version_check': 'True', 'use_colors': 'True', 'write_json': 'True', 'send_anonymous_usage_stats': 'True', 'printer_width': '80', 'static_parser': 'True', 'warn_error': 'None', 'log_cache_events': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'maximum_seed_size_mib': '1', 'debug': 'False', 'cache_selected_only': 'False'}
+[0m11:58:00.739617 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x706620d09ba0>]}
+[0m11:58:00.781317 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x70661fb028b0>]}
+[0m11:58:00.782069 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m11:58:00.815150 [debug] [MainThread]: checksum: 8ab685611d02c286f685be434a87832f07a83189d507affa7bb3d8246c36ee3f, vars: {}, profile: afive_dw, target: dev, version: 1.12.5
+[0m11:58:00.815683 [info ] [MainThread]: Unable to do partial parsing because saved manifest not found. Starting full parse.
+[0m11:58:00.815993 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'partial_parser', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x70661ff44c50>]}
+[0m11:58:01.530751 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.afive_dw.gold
+[0m11:58:01.533308 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x70661e78b200>]}
+[0m11:58:01.594113 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m11:58:01.598046 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m11:58:01.622158 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m11:58:01.643398 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x706617903e70>]}
+[0m11:58:01.643858 [info ] [MainThread]: Found 2 models, 4 data tests, 2 sources, 478 macros
+[0m11:58:01.644160 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066179a1cc0>]}
+[0m11:58:01.645409 [info ] [MainThread]: 
+[0m11:58:01.645752 [info ] [MainThread]: Concurrency: 4 threads (target='dev')
+[0m11:58:01.646018 [info ] [MainThread]: 
+[0m11:58:01.646443 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m11:58:01.648982 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m11:58:01.654787 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m11:58:01.672021 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m11:58:01.672806 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m11:58:01.673106 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m11:58:01.672450 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m11:58:01.673493 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m11:58:01.673777 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m11:58:01.682778 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.010 seconds
+[0m11:58:01.684742 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m11:58:01.683434 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.010 seconds
+[0m11:58:01.685752 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m11:58:01.686949 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_bronze)
+[0m11:58:01.690359 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_bronze"
+[0m11:58:01.691429 [debug] [ThreadPool]: On list_afive_dw_bronze: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_bronze"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'bronze'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'bronze'
+  
+[0m11:58:01.691723 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m11:58:01.690879 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_silver)
+[0m11:58:01.692892 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_silver"
+[0m11:58:01.693459 [debug] [ThreadPool]: On list_afive_dw_silver: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_silver"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'silver'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'silver'
+  
+[0m11:58:01.693964 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m11:58:01.702133 [debug] [ThreadPool]: SQL status: SELECT 3 in 0.010 seconds
+[0m11:58:01.703030 [debug] [ThreadPool]: On list_afive_dw_bronze: ROLLBACK
+[0m11:58:01.703416 [debug] [ThreadPool]: On list_afive_dw_bronze: Close
+[0m11:58:01.706271 [debug] [ThreadPool]: SQL status: SELECT 0 in 0.012 seconds
+[0m11:58:01.707492 [debug] [ThreadPool]: On list_afive_dw_silver: ROLLBACK
+[0m11:58:01.708110 [debug] [ThreadPool]: On list_afive_dw_silver: Close
+[0m11:58:01.710717 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:01.711054 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "master"} */
+select distinct
+        dependent_namespace.nspname as dependent_schema,
+        dependent_class.relname as dependent_name,
+        referenced_namespace.nspname as referenced_schema,
+        referenced_class.relname as referenced_name
+
+    -- Query for views: views are entries in pg_class with an entry in pg_rewrite, but we avoid
+    -- a seq scan on pg_rewrite by leveraging the fact there is an "internal" row in pg_depend for
+    -- the view...
+    from pg_class as dependent_class
+    join pg_namespace as dependent_namespace on dependent_namespace.oid = dependent_class.relnamespace
+    join pg_depend as dependent_depend on dependent_depend.refobjid = dependent_class.oid
+        and dependent_depend.classid = 'pg_rewrite'::regclass
+        and dependent_depend.refclassid = 'pg_class'::regclass
+        and dependent_depend.deptype = 'i'
+
+    -- ... and via pg_depend (that has a row per column, hence the need for "distinct" above, and
+    -- making sure to exclude the internal row to avoid a view appearing to depend on itself)...
+    join pg_depend as joining_depend on joining_depend.objid = dependent_depend.objid
+        and joining_depend.classid = 'pg_rewrite'::regclass
+        and joining_depend.refclassid = 'pg_class'::regclass
+        and joining_depend.refobjid != dependent_depend.refobjid
+
+    -- ... we can find the tables they query from in pg_class, but excluding system tables. Note we
+    -- don't need need to exclude _dependent_ system tables, because they only query from other
+    -- system tables, and so are automatically excluded by excluding _referenced_ system tables
+    join pg_class as referenced_class on referenced_class.oid = joining_depend.refobjid
+    join pg_namespace as referenced_namespace on referenced_namespace.oid = referenced_class.relnamespace
+        and referenced_namespace.nspname != 'information_schema'
+        and referenced_namespace.nspname not like 'pg\_%'
+
+    order by
+        dependent_schema, dependent_name, referenced_schema, referenced_name;
+[0m11:58:01.711351 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m11:58:01.719065 [debug] [MainThread]: SQL status: SELECT 0 in 0.008 seconds
+[0m11:58:01.719825 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066179e3650>]}
+[0m11:58:01.720217 [debug] [MainThread]: On master: ROLLBACK
+[0m11:58:01.720605 [debug] [MainThread]: On master: COMMIT
+[0m11:58:01.720887 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:01.721150 [debug] [MainThread]: On master: COMMIT
+[0m11:58:01.721506 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m11:58:01.721787 [debug] [MainThread]: On master: Close
+[0m11:58:01.724744 [debug] [Thread-1 (]: Began running node model.afive_dw.stg_market_prices
+[0m11:58:01.725482 [info ] [Thread-1 (]: 1 of 2 START sql view model bronze.stg_market_prices ........................... [RUN]
+[0m11:58:01.726131 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list_afive_dw_silver, now model.afive_dw.stg_market_prices)
+[0m11:58:01.726657 [debug] [Thread-1 (]: Began compiling node model.afive_dw.stg_market_prices
+[0m11:58:01.731695 [debug] [Thread-1 (]: Writing injected SQL for node "model.afive_dw.stg_market_prices"
+[0m11:58:01.732242 [debug] [Thread-1 (]: Began executing node model.afive_dw.stg_market_prices
+[0m11:58:01.751484 [debug] [Thread-1 (]: Writing runtime sql for node "model.afive_dw.stg_market_prices"
+[0m11:58:01.752013 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m11:58:01.752338 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+
+  create view "afive_dw"."bronze"."stg_market_prices__dbt_tmp"
+    
+    
+  as (
+    with raw_data as (
+    select * from "afive_dw"."bronze"."raw_market_prices"
+),
+
+cleaned as (
+    select
+        upper(trim(ticker)) as ticker,
+        trade_date::date as trade_date,
+        open_price::numeric(14, 4) as open_price,
+        high_price::numeric(14, 4) as high_price,
+        low_price::numeric(14, 4) as low_price,
+        close_price::numeric(14, 4) as close_price,
+        adj_close::numeric(14, 4) as adj_close,
+        volume::bigint as volume,
+        coalesce(dividend_amount::numeric(14, 4), 0.0) as dividend_amount,
+        coalesce(split_coefficient::numeric(10, 4), 1.0) as split_coefficient,
+        ingested_at
+    from raw_data
+)
+
+select * from cleaned
+  );
+[0m11:58:01.752636 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m11:58:01.761413 [debug] [Thread-1 (]: SQL status: CREATE VIEW in 0.009 seconds
+[0m11:58:01.764801 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m11:58:01.765128 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+alter table "afive_dw"."bronze"."stg_market_prices__dbt_tmp" rename to "stg_market_prices"
+[0m11:58:01.765825 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m11:58:01.774797 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: COMMIT
+[0m11:58:01.775120 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m11:58:01.775406 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: COMMIT
+[0m11:58:01.779336 [debug] [Thread-1 (]: SQL status: COMMIT in 0.004 seconds
+[0m11:58:01.783122 [debug] [Thread-1 (]: Applying DROP to: "afive_dw"."bronze"."stg_market_prices__dbt_backup"
+[0m11:58:01.785745 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m11:58:01.786056 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+drop view if exists "afive_dw"."bronze"."stg_market_prices__dbt_backup" cascade
+[0m11:58:01.786565 [debug] [Thread-1 (]: SQL status: DROP VIEW in 0.000 seconds
+[0m11:58:01.788029 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: Close
+[0m11:58:01.789295 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066222ff8b0>]}
+[0m11:58:01.789836 [info ] [Thread-1 (]: 1 of 2 OK created sql view model bronze.stg_market_prices ...................... [[32mCREATE VIEW[0m in 0.06s]
+[0m11:58:01.790285 [debug] [Thread-1 (]: Finished running node model.afive_dw.stg_market_prices
+[0m11:58:01.791251 [debug] [Thread-2 (]: Began running node model.afive_dw.silver_market_prices
+[0m11:58:01.791935 [info ] [Thread-2 (]: 2 of 2 START sql table model silver.silver_market_prices ....................... [RUN]
+[0m11:58:01.792525 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly list_afive_dw_bronze, now model.afive_dw.silver_market_prices)
+[0m11:58:01.792993 [debug] [Thread-2 (]: Began compiling node model.afive_dw.silver_market_prices
+[0m11:58:01.794354 [debug] [Thread-2 (]: Writing injected SQL for node "model.afive_dw.silver_market_prices"
+[0m11:58:01.794814 [debug] [Thread-2 (]: Began executing node model.afive_dw.silver_market_prices
+[0m11:58:01.806497 [debug] [Thread-2 (]: Writing runtime sql for node "model.afive_dw.silver_market_prices"
+[0m11:58:01.806993 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m11:58:01.807321 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+
+  
+    
+
+  create  table "afive_dw"."silver"."silver_market_prices__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with staged as (
+    select * from "afive_dw"."bronze"."stg_market_prices"
+),
+
+enriched as (
+    select
+        ticker,
+        trade_date,
+        open_price,
+        high_price,
+        low_price,
+        close_price,
+        adj_close,
+        volume,
+        dividend_amount,
+        split_coefficient,
+        -- Daily percentage change in adjusted close
+        round(
+            (adj_close - lag(adj_close) over (partition by ticker order by trade_date)) 
+            / nullif(lag(adj_close) over (partition by ticker order by trade_date), 0),
+            6
+        ) as daily_return,
+        -- Liquidity metric: Traded Dollar Volume
+        round(close_price * volume, 2) as dollar_volume,
+        -- 20-Day and 50-Day Simple Moving Averages
+        round(avg(adj_close) over (
+            partition by ticker 
+            order by trade_date 
+            rows between 19 preceding and current row
+        ), 4) as sma_20,
+        round(avg(adj_close) over (
+            partition by ticker 
+            order by trade_date 
+            rows between 49 preceding and current row
+        ), 4) as sma_50,
+        ingested_at as updated_at
+    from staged
+)
+
+select * from enriched
+  );
+  
+[0m11:58:01.807633 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m11:58:01.823812 [debug] [Thread-2 (]: SQL status: SELECT 48 in 0.016 seconds
+[0m11:58:01.828376 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m11:58:01.828717 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+alter table "afive_dw"."silver"."silver_market_prices__dbt_tmp" rename to "silver_market_prices"
+[0m11:58:01.829556 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m11:58:01.830952 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: COMMIT
+[0m11:58:01.831438 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m11:58:01.831882 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: COMMIT
+[0m11:58:01.833398 [debug] [Thread-2 (]: SQL status: COMMIT in 0.001 seconds
+[0m11:58:01.835172 [debug] [Thread-2 (]: Applying DROP to: "afive_dw"."silver"."silver_market_prices__dbt_backup"
+[0m11:58:01.836724 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m11:58:01.837044 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+drop table if exists "afive_dw"."silver"."silver_market_prices__dbt_backup" cascade
+[0m11:58:01.837524 [debug] [Thread-2 (]: SQL status: DROP TABLE in 0.000 seconds
+[0m11:58:01.838340 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: Close
+[0m11:58:01.838819 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '1e01f560-e6d3-43fa-98f1-54ef288e67f6', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066156bd310>]}
+[0m11:58:01.839296 [info ] [Thread-2 (]: 2 of 2 OK created sql table model silver.silver_market_prices .................. [[32mSELECT 48[0m in 0.05s]
+[0m11:58:01.839764 [debug] [Thread-2 (]: Finished running node model.afive_dw.silver_market_prices
+[0m11:58:01.841544 [debug] [MainThread]: On master: COMMIT
+[0m11:58:01.842077 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:01.842520 [debug] [MainThread]: On master: COMMIT
+[0m11:58:01.842951 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m11:58:01.848191 [debug] [MainThread]: SQL status: COMMIT in 0.005 seconds
+[0m11:58:01.848550 [debug] [MainThread]: On master: Close
+[0m11:58:01.848937 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m11:58:01.849204 [debug] [MainThread]: Connection 'model.afive_dw.silver_market_prices' was properly closed.
+[0m11:58:01.849485 [debug] [MainThread]: Connection 'model.afive_dw.stg_market_prices' was properly closed.
+[0m11:58:01.849836 [info ] [MainThread]: 
+[0m11:58:01.850128 [info ] [MainThread]: Finished running 1 table model, 1 view model in 0 hours 0 minutes and 0.20 seconds (0.20s).
+[0m11:58:01.850677 [debug] [MainThread]: Command end result
+[0m11:58:01.868092 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m11:58:01.870995 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m11:58:01.873767 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m11:58:01.877823 [debug] [MainThread]: Wrote artifact RunExecutionResult to dbt_afive/target/run_results.json
+[0m11:58:01.878133 [info ] [MainThread]: 
+[0m11:58:01.878467 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m11:58:01.878821 [info ] [MainThread]: 
+[0m11:58:01.879187 [info ] [MainThread]: Done. PASS=2 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=2
+[0m11:58:01.879731 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 1.2988175, "process_in_blocks": "376", "process_kernel_time": 0.067724, "process_mem_max_rss": "153880", "process_out_blocks": "4584", "process_user_time": 2.024206}
+[0m11:58:01.880107 [debug] [MainThread]: Command `dbt run` succeeded at 11:58:01.880051 after 1.30 seconds
+[0m11:58:01.880431 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7066157ce3d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x70661ef85cd0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x706620c82ac0>]}
+[0m11:58:01.880766 [debug] [MainThread]: Flushing usage events
+[0m11:58:03.029365 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:58:32.534198 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e27a5b63c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e27c150f50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e278c33890>]}
+
+
+============================== 11:58:32.536492 | 4fe45454-4d31-4826-91ee-6cafec6f5b0b ==============================
+[0m11:58:32.536492 [info ] [MainThread]: Running with dbt=1.12.5
+[0m11:58:32.536918 [debug] [MainThread]: running dbt with arguments {'invocation_command': 'dbt test --project-dir dbt_afive --profiles-dir dbt_afive --select source:bronze', 'log_format': 'default', 'warn_error': 'None', 'log_path': 'dbt_afive/logs', 'hints_enabled': 'True', 'partial_parse': 'True', 'introspect': 'True', 'log_cache_events': 'False', 'use_colors': 'True', 'empty': 'None', 'debug': 'False', 'profiles_dir': 'dbt_afive', 'printer_width': '80', 'no_print': 'None', 'maximum_seed_size_mib': '1', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'fail_fast': 'False', 'cache_selected_only': 'False', 'target_path': 'None', 'write_json': 'True', 'indirect_selection': 'eager', 'use_experimental_parser': 'False', 'static_parser': 'True', 'version_check': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m11:58:32.637177 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e278cf5ba0>]}
+[0m11:58:32.679464 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e2783be8b0>]}
+[0m11:58:32.680321 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m11:58:32.713075 [debug] [MainThread]: checksum: 8ab685611d02c286f685be434a87832f07a83189d507affa7bb3d8246c36ee3f, vars: {}, profile: afive_dw, target: dev, version: 1.12.5
+[0m11:58:32.789252 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 0 files added, 0 files changed.
+[0m11:58:32.789623 [debug] [MainThread]: Nothing changed, skipping partial parsing.
+[0m11:58:32.789891 [debug] [MainThread]: Partial parsing enabled, no changes found, skipping parsing
+[0m11:58:32.793116 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.afive_dw.gold
+[0m11:58:32.795768 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e276f6d550>]}
+[0m11:58:32.877538 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m11:58:32.879335 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m11:58:32.886662 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m11:58:32.975586 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e277383c50>]}
+[0m11:58:32.976052 [info ] [MainThread]: Found 2 models, 4 data tests, 2 sources, 478 macros
+[0m11:58:32.976355 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e275e6b4d0>]}
+[0m11:58:32.977736 [info ] [MainThread]: 
+[0m11:58:32.978101 [info ] [MainThread]: Concurrency: 4 threads (target='dev')
+[0m11:58:32.978372 [info ] [MainThread]: 
+[0m11:58:32.978801 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m11:58:32.979891 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw_bronze'
+[0m11:58:32.986724 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw_silver'
+[0m11:58:33.004748 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_silver"
+[0m11:58:33.005563 [debug] [ThreadPool]: On list_afive_dw_silver: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_silver"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'silver'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'silver'
+  
+[0m11:58:33.005873 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m11:58:33.005175 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_bronze"
+[0m11:58:33.006278 [debug] [ThreadPool]: On list_afive_dw_bronze: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_bronze"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'bronze'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'bronze'
+  
+[0m11:58:33.006609 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m11:58:33.018923 [debug] [ThreadPool]: SQL status: SELECT 4 in 0.012 seconds
+[0m11:58:33.020477 [debug] [ThreadPool]: On list_afive_dw_bronze: ROLLBACK
+[0m11:58:33.019400 [debug] [ThreadPool]: SQL status: SELECT 1 in 0.013 seconds
+[0m11:58:33.021654 [debug] [ThreadPool]: On list_afive_dw_silver: ROLLBACK
+[0m11:58:33.022126 [debug] [ThreadPool]: On list_afive_dw_bronze: Close
+[0m11:58:33.022661 [debug] [ThreadPool]: On list_afive_dw_silver: Close
+[0m11:58:33.025723 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:33.026064 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "master"} */
+select distinct
+        dependent_namespace.nspname as dependent_schema,
+        dependent_class.relname as dependent_name,
+        referenced_namespace.nspname as referenced_schema,
+        referenced_class.relname as referenced_name
+
+    -- Query for views: views are entries in pg_class with an entry in pg_rewrite, but we avoid
+    -- a seq scan on pg_rewrite by leveraging the fact there is an "internal" row in pg_depend for
+    -- the view...
+    from pg_class as dependent_class
+    join pg_namespace as dependent_namespace on dependent_namespace.oid = dependent_class.relnamespace
+    join pg_depend as dependent_depend on dependent_depend.refobjid = dependent_class.oid
+        and dependent_depend.classid = 'pg_rewrite'::regclass
+        and dependent_depend.refclassid = 'pg_class'::regclass
+        and dependent_depend.deptype = 'i'
+
+    -- ... and via pg_depend (that has a row per column, hence the need for "distinct" above, and
+    -- making sure to exclude the internal row to avoid a view appearing to depend on itself)...
+    join pg_depend as joining_depend on joining_depend.objid = dependent_depend.objid
+        and joining_depend.classid = 'pg_rewrite'::regclass
+        and joining_depend.refclassid = 'pg_class'::regclass
+        and joining_depend.refobjid != dependent_depend.refobjid
+
+    -- ... we can find the tables they query from in pg_class, but excluding system tables. Note we
+    -- don't need need to exclude _dependent_ system tables, because they only query from other
+    -- system tables, and so are automatically excluded by excluding _referenced_ system tables
+    join pg_class as referenced_class on referenced_class.oid = joining_depend.refobjid
+    join pg_namespace as referenced_namespace on referenced_namespace.oid = referenced_class.relnamespace
+        and referenced_namespace.nspname != 'information_schema'
+        and referenced_namespace.nspname not like 'pg\_%'
+
+    order by
+        dependent_schema, dependent_name, referenced_schema, referenced_name;
+[0m11:58:33.026359 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m11:58:33.035789 [debug] [MainThread]: SQL status: SELECT 1 in 0.009 seconds
+[0m11:58:33.036741 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '4fe45454-4d31-4826-91ee-6cafec6f5b0b', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e27734e410>]}
+[0m11:58:33.037107 [debug] [MainThread]: On master: ROLLBACK
+[0m11:58:33.037490 [debug] [MainThread]: On master: COMMIT
+[0m11:58:33.037769 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:33.038016 [debug] [MainThread]: On master: COMMIT
+[0m11:58:33.038341 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m11:58:33.038600 [debug] [MainThread]: On master: Close
+[0m11:58:33.040516 [debug] [Thread-3 (]: Began running node test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd
+[0m11:58:33.041099 [info ] [Thread-3 (]: 3 of 4 START test source_not_null_bronze_raw_sec_filings_cik ................... [RUN]
+[0m11:58:33.041764 [debug] [Thread-3 (]: Acquiring new postgres connection 'test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd'
+[0m11:58:33.043239 [debug] [Thread-3 (]: Began compiling node test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd
+[0m11:58:33.048804 [debug] [Thread-4 (]: Began running node test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6
+[0m11:58:33.042265 [debug] [Thread-2 (]: Began running node test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc
+[0m11:58:33.054723 [debug] [Thread-3 (]: Writing injected SQL for node "test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd"
+[0m11:58:33.049158 [info ] [Thread-4 (]: 4 of 4 START test source_not_null_bronze_raw_sec_filings_form_type ............. [RUN]
+[0m11:58:33.055730 [debug] [Thread-4 (]: Acquiring new postgres connection 'test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6'
+[0m11:58:33.056033 [debug] [Thread-4 (]: Began compiling node test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6
+[0m11:58:33.059263 [debug] [Thread-4 (]: Writing injected SQL for node "test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6"
+[0m11:58:33.055220 [info ] [Thread-2 (]: 2 of 4 START test source_not_null_bronze_raw_market_prices_trade_date .......... [RUN]
+[0m11:58:33.059768 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly list_afive_dw_silver, now test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc)
+[0m11:58:33.060091 [debug] [Thread-2 (]: Began compiling node test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc
+[0m11:58:33.063242 [debug] [Thread-2 (]: Writing injected SQL for node "test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc"
+[0m11:58:33.042732 [debug] [Thread-1 (]: Began running node test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a
+[0m11:58:33.064412 [info ] [Thread-1 (]: 1 of 4 START test source_not_null_bronze_raw_market_prices_ticker .............. [RUN]
+[0m11:58:33.064828 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list_afive_dw_bronze, now test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a)
+[0m11:58:33.063695 [debug] [Thread-4 (]: Began executing node test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6
+[0m11:58:33.064017 [debug] [Thread-3 (]: Began executing node test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd
+[0m11:58:33.065168 [debug] [Thread-2 (]: Began executing node test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc
+[0m11:58:33.065508 [debug] [Thread-1 (]: Began compiling node test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a
+[0m11:58:33.075222 [debug] [Thread-4 (]: Writing runtime sql for node "test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6"
+[0m11:58:33.076191 [debug] [Thread-3 (]: Writing runtime sql for node "test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd"
+[0m11:58:33.077440 [debug] [Thread-2 (]: Writing runtime sql for node "test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc"
+[0m11:58:33.080836 [debug] [Thread-1 (]: Writing injected SQL for node "test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a"
+[0m11:58:33.081478 [debug] [Thread-3 (]: Using postgres connection "test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd"
+[0m11:58:33.081863 [debug] [Thread-3 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd"} */
+
+    
+    select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select cik
+from "afive_dw"."bronze"."raw_sec_filings"
+where cik is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+[0m11:58:33.082895 [debug] [Thread-3 (]: Opening a new connection, currently in state init
+[0m11:58:33.083282 [debug] [Thread-2 (]: Using postgres connection "test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc"
+[0m11:58:33.082226 [debug] [Thread-4 (]: Using postgres connection "test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6"
+[0m11:58:33.082574 [debug] [Thread-1 (]: Began executing node test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a
+[0m11:58:33.084801 [debug] [Thread-1 (]: Writing runtime sql for node "test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a"
+[0m11:58:33.083916 [debug] [Thread-4 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6"} */
+
+    
+    select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select form_type
+from "afive_dw"."bronze"."raw_sec_filings"
+where form_type is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+[0m11:58:33.083598 [debug] [Thread-2 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc"} */
+
+    
+    select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select trade_date
+from "afive_dw"."bronze"."raw_market_prices"
+where trade_date is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+[0m11:58:33.085505 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m11:58:33.085183 [debug] [Thread-4 (]: Opening a new connection, currently in state init
+[0m11:58:33.085825 [debug] [Thread-1 (]: Using postgres connection "test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a"
+[0m11:58:33.086310 [debug] [Thread-1 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a"} */
+
+    
+    select
+      count(*) as failures,
+      count(*) != 0 as should_warn,
+      count(*) != 0 as should_error
+    from (
+      
+    
+  
+    
+    
+
+
+
+select ticker
+from "afive_dw"."bronze"."raw_market_prices"
+where ticker is null
+
+
+
+  
+  
+      
+    ) dbt_internal_test
+[0m11:58:33.086673 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m11:58:33.093480 [debug] [Thread-3 (]: SQL status: SELECT 1 in 0.010 seconds
+[0m11:58:33.098560 [debug] [Thread-3 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd: ROLLBACK
+[0m11:58:33.094163 [debug] [Thread-4 (]: SQL status: SELECT 1 in 0.009 seconds
+[0m11:58:33.101154 [debug] [Thread-4 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6: ROLLBACK
+[0m11:58:33.099116 [debug] [Thread-2 (]: SQL status: SELECT 1 in 0.014 seconds
+[0m11:58:33.099554 [debug] [Thread-1 (]: SQL status: SELECT 1 in 0.013 seconds
+[0m11:58:33.102197 [debug] [Thread-2 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc: ROLLBACK
+[0m11:58:33.102629 [debug] [Thread-4 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6: Close
+[0m11:58:33.103158 [debug] [Thread-3 (]: On test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd: Close
+[0m11:58:33.105492 [debug] [Thread-2 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc: Close
+[0m11:58:33.105042 [info ] [Thread-4 (]: 4 of 4 PASS source_not_null_bronze_raw_sec_filings_form_type ................... [[32mPASS[0m in 0.05s]
+[0m11:58:33.104189 [debug] [Thread-1 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a: ROLLBACK
+[0m11:58:33.106569 [info ] [Thread-3 (]: 3 of 4 PASS source_not_null_bronze_raw_sec_filings_cik ......................... [[32mPASS[0m in 0.06s]
+[0m11:58:33.109004 [debug] [Thread-3 (]: Finished running node test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd
+[0m11:58:33.108187 [debug] [Thread-4 (]: Finished running node test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6
+[0m11:58:33.109530 [debug] [Thread-1 (]: On test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a: Close
+[0m11:58:33.107402 [info ] [Thread-2 (]: 2 of 4 PASS source_not_null_bronze_raw_market_prices_trade_date ................ [[32mPASS[0m in 0.05s]
+[0m11:58:33.110319 [debug] [Thread-2 (]: Finished running node test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc
+[0m11:58:33.110810 [info ] [Thread-1 (]: 1 of 4 PASS source_not_null_bronze_raw_market_prices_ticker .................... [[32mPASS[0m in 0.05s]
+[0m11:58:33.111601 [debug] [Thread-1 (]: Finished running node test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a
+[0m11:58:33.113140 [debug] [MainThread]: On master: COMMIT
+[0m11:58:33.113456 [debug] [MainThread]: Using postgres connection "master"
+[0m11:58:33.113728 [debug] [MainThread]: On master: COMMIT
+[0m11:58:33.113979 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m11:58:33.120780 [debug] [MainThread]: SQL status: COMMIT in 0.007 seconds
+[0m11:58:33.121303 [debug] [MainThread]: On master: Close
+[0m11:58:33.121904 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m11:58:33.122359 [debug] [MainThread]: Connection 'test.afive_dw.source_not_null_bronze_raw_market_prices_ticker.03a822a97a' was properly closed.
+[0m11:58:33.122794 [debug] [MainThread]: Connection 'test.afive_dw.source_not_null_bronze_raw_market_prices_trade_date.965ce987dc' was properly closed.
+[0m11:58:33.123210 [debug] [MainThread]: Connection 'test.afive_dw.source_not_null_bronze_raw_sec_filings_cik.00353225bd' was properly closed.
+[0m11:58:33.123624 [debug] [MainThread]: Connection 'test.afive_dw.source_not_null_bronze_raw_sec_filings_form_type.8b5d7611d6' was properly closed.
+[0m11:58:33.124007 [info ] [MainThread]: 
+[0m11:58:33.124295 [info ] [MainThread]: Finished running 4 data tests in 0 hours 0 minutes and 0.15 seconds (0.15s).
+[0m11:58:33.124940 [debug] [MainThread]: Command end result
+[0m11:58:33.141775 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m11:58:33.143574 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m11:58:33.145155 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m11:58:33.149843 [debug] [MainThread]: Wrote artifact RunExecutionResult to dbt_afive/target/run_results.json
+[0m11:58:33.150149 [info ] [MainThread]: 
+[0m11:58:33.150461 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m11:58:33.150735 [info ] [MainThread]: 
+[0m11:58:33.151007 [info ] [MainThread]: Done. PASS=4 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=4
+[0m11:58:33.151522 [debug] [MainThread]: Resource report: {"command_name": "test", "command_success": true, "command_wall_clock_time": 0.66647583, "process_in_blocks": "16", "process_kernel_time": 0.087303, "process_mem_max_rss": "173072", "process_out_blocks": "3728", "process_user_time": 1.418245}
+[0m11:58:33.151908 [debug] [MainThread]: Command `dbt test` succeeded at 11:58:33.151851 after 0.67 seconds
+[0m11:58:33.152216 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e275e63350>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e27a314100>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x74e275703070>]}
+[0m11:58:33.152516 [debug] [MainThread]: Flushing usage events
+[0m11:58:34.149288 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m13:00:50.091382 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6d6c63c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6f2acf50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6bd3f890>]}
+
+
+============================== 13:00:50.094031 | 0a7e9707-bb46-4fb5-a592-f1c6f50c540d ==============================
+[0m13:00:50.094031 [info ] [MainThread]: Running with dbt=1.12.5
+[0m13:00:50.094436 [debug] [MainThread]: running dbt with arguments {'static_parser': 'True', 'warn_error': 'None', 'version_check': 'True', 'log_format': 'default', 'quiet': 'False', 'profiles_dir': 'dbt_afive', 'empty': 'False', 'log_path': 'dbt_afive/logs', 'partial_parse': 'True', 'hints_enabled': 'True', 'debug': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'cache_selected_only': 'False', 'send_anonymous_usage_stats': 'True', 'use_colors': 'True', 'fail_fast': 'False', 'no_print': 'None', 'introspect': 'True', 'maximum_seed_size_mib': '1', 'indirect_selection': 'eager', 'target_path': 'None', 'write_json': 'True', 'invocation_command': 'dbt run --project-dir dbt_afive --profiles-dir dbt_afive --select stg_sec_facts silver_financial_statements_scd2', 'printer_width': '80', 'log_cache_events': 'False', 'use_experimental_parser': 'False'}
+[0m13:00:50.194702 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6be0dba0>]}
+[0m13:00:50.237179 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6af0a8b0>]}
+[0m13:00:50.238156 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m13:00:50.271600 [debug] [MainThread]: checksum: 8ab685611d02c286f685be434a87832f07a83189d507affa7bb3d8246c36ee3f, vars: {}, profile: afive_dw, target: dev, version: 1.12.5
+[0m13:00:50.348061 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 2 files added, 0 files changed.
+[0m13:00:50.348522 [debug] [MainThread]: Partial parsing: added file: afive_dw://models/silver/silver_financial_statements_scd2.sql
+[0m13:00:50.348827 [debug] [MainThread]: Partial parsing: added file: afive_dw://models/staging/stg_sec_facts.sql
+[0m13:00:50.536688 [warn ] [MainThread]: [[33mWARNING[0m]: Configuration paths exist in your dbt_project.yml file which do not apply to any resources.
+There are 1 unused configuration paths:
+- models.afive_dw.gold
+[0m13:00:50.539431 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6b34f650>]}
+[0m13:00:50.605399 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m13:00:50.607154 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m13:00:50.614343 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m13:00:50.619504 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c69784aa0>]}
+[0m13:00:50.619895 [info ] [MainThread]: Found 4 models, 4 data tests, 2 sources, 478 macros
+[0m13:00:50.620185 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c697f0ad0>]}
+[0m13:00:50.621396 [info ] [MainThread]: 
+[0m13:00:50.621723 [info ] [MainThread]: Concurrency: 4 threads (target='dev')
+[0m13:00:50.621979 [info ] [MainThread]: 
+[0m13:00:50.622380 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m13:00:50.624883 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m13:00:50.631095 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m13:00:50.646843 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m13:00:50.647791 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m13:00:50.648078 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m13:00:50.647315 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m13:00:50.648484 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m13:00:50.648909 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m13:00:50.656994 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.009 seconds
+[0m13:00:50.657814 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m13:00:50.659748 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.011 seconds
+[0m13:00:50.661068 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m13:00:50.662694 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_silver)
+[0m13:00:50.668546 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_silver"
+[0m13:00:50.663419 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_bronze)
+[0m13:00:50.669952 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_bronze"
+[0m13:00:50.668872 [debug] [ThreadPool]: On list_afive_dw_silver: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_silver"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'silver'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'silver'
+  
+[0m13:00:50.670932 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m13:00:50.670473 [debug] [ThreadPool]: On list_afive_dw_bronze: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_bronze"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'bronze'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'bronze'
+  
+[0m13:00:50.671303 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m13:00:50.680300 [debug] [ThreadPool]: SQL status: SELECT 4 in 0.009 seconds
+[0m13:00:50.682345 [debug] [ThreadPool]: On list_afive_dw_bronze: ROLLBACK
+[0m13:00:50.680960 [debug] [ThreadPool]: SQL status: SELECT 1 in 0.010 seconds
+[0m13:00:50.683410 [debug] [ThreadPool]: On list_afive_dw_silver: ROLLBACK
+[0m13:00:50.683757 [debug] [ThreadPool]: On list_afive_dw_bronze: Close
+[0m13:00:50.684489 [debug] [ThreadPool]: On list_afive_dw_silver: Close
+[0m13:00:50.688699 [debug] [MainThread]: Using postgres connection "master"
+[0m13:00:50.689053 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "master"} */
+select distinct
+        dependent_namespace.nspname as dependent_schema,
+        dependent_class.relname as dependent_name,
+        referenced_namespace.nspname as referenced_schema,
+        referenced_class.relname as referenced_name
+
+    -- Query for views: views are entries in pg_class with an entry in pg_rewrite, but we avoid
+    -- a seq scan on pg_rewrite by leveraging the fact there is an "internal" row in pg_depend for
+    -- the view...
+    from pg_class as dependent_class
+    join pg_namespace as dependent_namespace on dependent_namespace.oid = dependent_class.relnamespace
+    join pg_depend as dependent_depend on dependent_depend.refobjid = dependent_class.oid
+        and dependent_depend.classid = 'pg_rewrite'::regclass
+        and dependent_depend.refclassid = 'pg_class'::regclass
+        and dependent_depend.deptype = 'i'
+
+    -- ... and via pg_depend (that has a row per column, hence the need for "distinct" above, and
+    -- making sure to exclude the internal row to avoid a view appearing to depend on itself)...
+    join pg_depend as joining_depend on joining_depend.objid = dependent_depend.objid
+        and joining_depend.classid = 'pg_rewrite'::regclass
+        and joining_depend.refclassid = 'pg_class'::regclass
+        and joining_depend.refobjid != dependent_depend.refobjid
+
+    -- ... we can find the tables they query from in pg_class, but excluding system tables. Note we
+    -- don't need need to exclude _dependent_ system tables, because they only query from other
+    -- system tables, and so are automatically excluded by excluding _referenced_ system tables
+    join pg_class as referenced_class on referenced_class.oid = joining_depend.refobjid
+    join pg_namespace as referenced_namespace on referenced_namespace.oid = referenced_class.relnamespace
+        and referenced_namespace.nspname != 'information_schema'
+        and referenced_namespace.nspname not like 'pg\_%'
+
+    order by
+        dependent_schema, dependent_name, referenced_schema, referenced_name;
+[0m13:00:50.689346 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m13:00:50.696623 [debug] [MainThread]: SQL status: SELECT 1 in 0.007 seconds
+[0m13:00:50.697557 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c697eb450>]}
+[0m13:00:50.697941 [debug] [MainThread]: On master: ROLLBACK
+[0m13:00:50.698338 [debug] [MainThread]: On master: COMMIT
+[0m13:00:50.698599 [debug] [MainThread]: Using postgres connection "master"
+[0m13:00:50.698860 [debug] [MainThread]: On master: COMMIT
+[0m13:00:50.699387 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m13:00:50.699938 [debug] [MainThread]: On master: Close
+[0m13:00:50.702495 [debug] [Thread-1 (]: Began running node model.afive_dw.stg_sec_facts
+[0m13:00:50.703221 [info ] [Thread-1 (]: 1 of 2 START sql view model bronze.stg_sec_facts ............................... [RUN]
+[0m13:00:50.703862 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list_afive_dw_bronze, now model.afive_dw.stg_sec_facts)
+[0m13:00:50.704378 [debug] [Thread-1 (]: Began compiling node model.afive_dw.stg_sec_facts
+[0m13:00:50.711366 [debug] [Thread-1 (]: Writing injected SQL for node "model.afive_dw.stg_sec_facts"
+[0m13:00:50.712132 [debug] [Thread-1 (]: Began executing node model.afive_dw.stg_sec_facts
+[0m13:00:50.734389 [debug] [Thread-1 (]: Writing runtime sql for node "model.afive_dw.stg_sec_facts"
+[0m13:00:50.734864 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:00:50.735212 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+
+  create view "afive_dw"."bronze"."stg_sec_facts__dbt_tmp"
+    
+    
+  as (
+    with raw_filings as (
+    select
+        ticker,
+        cik,
+        payload
+    from "afive_dw"."bronze"."raw_sec_filings"
+),
+
+-- Define target GAAP taxonomy tags to extract from the raw JSONB
+target_tags as (
+    select unnest(array[
+        -- Income Statement
+        'Revenues',
+        'SalesRevenueNet',
+        'OperatingIncomeLoss',
+        'NetIncomeLoss',
+        -- Balance Sheet
+        'Assets',
+        'AssetsCurrent',
+        'Liabilities',
+        'LiabilitiesCurrent',
+        'StockholdersEquity',
+        'CashAndCashEquivalentsAtCarryingValue',
+        -- Cash Flow Statement
+        'NetCashProvidedByUsedInOperatingActivities',
+        'PaymentsToAcquirePropertyPlantAndEquipment'
+    ]) as tag_name
+),
+
+extracted_facts as (
+    select
+        f.ticker,
+        f.cik,
+        t.tag_name,
+        jsonb_array_elements(f.payload->'facts'->'us-gaap'->t.tag_name->'units'->'USD') as unit_node
+    from raw_filings f
+    cross join target_tags t
+    where f.payload->'facts'->'us-gaap' ? t.tag_name
+),
+
+parsed as (
+    select
+        ticker,
+        cik,
+        tag_name as gaap_tag,
+        unit_node->>'form' as form_type,
+        (unit_node->>'fy')::int as fiscal_year,
+        upper(unit_node->>'fp') as fiscal_period,
+        (unit_node->>'filed')::date as filed_date,
+        (unit_node->>'start')::date as period_start_date,
+        (unit_node->>'end')::date as period_end_date,
+        (unit_node->>'val')::numeric(20, 2) as amount,
+        unit_node->>'accn' as accession_number
+    from extracted_facts
+    where unit_node->>'val' is not null
+      and unit_node->>'fy' is not null
+      and unit_node->>'fp' in ('Q1', 'Q2', 'Q3', 'FY')
+)
+
+select distinct * from parsed
+  );
+[0m13:00:50.735536 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m13:00:50.743287 [debug] [Thread-1 (]: SQL status: CREATE VIEW in 0.008 seconds
+[0m13:00:50.746678 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:00:50.747036 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+alter table "afive_dw"."bronze"."stg_sec_facts__dbt_tmp" rename to "stg_sec_facts"
+[0m13:00:50.747777 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:00:50.756810 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: COMMIT
+[0m13:00:50.757138 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:00:50.757422 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: COMMIT
+[0m13:00:50.758380 [debug] [Thread-1 (]: SQL status: COMMIT in 0.001 seconds
+[0m13:00:50.761889 [debug] [Thread-1 (]: Applying DROP to: "afive_dw"."bronze"."stg_sec_facts__dbt_backup"
+[0m13:00:50.764617 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:00:50.764955 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+drop view if exists "afive_dw"."bronze"."stg_sec_facts__dbt_backup" cascade
+[0m13:00:50.765522 [debug] [Thread-1 (]: SQL status: DROP VIEW in 0.000 seconds
+[0m13:00:50.767047 [debug] [Thread-1 (]: On model.afive_dw.stg_sec_facts: Close
+[0m13:00:50.768233 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6977b410>]}
+[0m13:00:50.768819 [info ] [Thread-1 (]: 1 of 2 OK created sql view model bronze.stg_sec_facts .......................... [[32mCREATE VIEW[0m in 0.06s]
+[0m13:00:50.769278 [debug] [Thread-1 (]: Finished running node model.afive_dw.stg_sec_facts
+[0m13:00:50.770206 [debug] [Thread-2 (]: Began running node model.afive_dw.silver_financial_statements_scd2
+[0m13:00:50.770779 [info ] [Thread-2 (]: 2 of 2 START sql table model silver.silver_financial_statements_scd2 ........... [RUN]
+[0m13:00:50.771309 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly list_afive_dw_silver, now model.afive_dw.silver_financial_statements_scd2)
+[0m13:00:50.771789 [debug] [Thread-2 (]: Began compiling node model.afive_dw.silver_financial_statements_scd2
+[0m13:00:50.773621 [debug] [Thread-2 (]: Writing injected SQL for node "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:50.774225 [debug] [Thread-2 (]: Began executing node model.afive_dw.silver_financial_statements_scd2
+[0m13:00:50.785757 [debug] [Thread-2 (]: Writing runtime sql for node "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:50.786236 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:50.786561 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+
+  
+    
+
+  create  table "afive_dw"."silver"."silver_financial_statements_scd2__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with staged_facts as (
+    select * from "afive_dw"."bronze"."stg_sec_facts"
+),
+
+ordered_facts as (
+    select
+        ticker,
+        cik,
+        gaap_tag,
+        form_type,
+        fiscal_year,
+        fiscal_period,
+        period_start_date,
+        period_end_date,
+        amount,
+        accession_number,
+        filed_date as valid_from,
+        lead(filed_date) over (
+            partition by ticker, fiscal_year, fiscal_period, gaap_tag 
+            order by filed_date asc, accession_number asc
+        ) as next_filed_date,
+        row_number() over (
+            partition by ticker, fiscal_year, fiscal_period, gaap_tag 
+            order by filed_date desc, accession_number desc
+        ) as recency_rank
+    from staged_facts
+),
+
+scd2 as (
+    select
+        -- Surrogate Key
+        md5(concat_ws('||', ticker, fiscal_year, fiscal_period, gaap_tag, valid_from)) as statement_sk,
+        ticker,
+        cik,
+        gaap_tag,
+        form_type,
+        fiscal_year,
+        fiscal_period,
+        period_start_date,
+        period_end_date,
+        amount,
+        accession_number,
+        valid_from,
+        coalesce(next_filed_date, '9999-12-31'::date) as valid_to,
+        case when recency_rank = 1 then true else false end as is_current,
+        current_timestamp as dbt_updated_at
+    from ordered_facts
+)
+
+select * from scd2
+  );
+  
+[0m13:00:50.786876 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m13:00:51.080888 [debug] [Thread-2 (]: SQL status: SELECT 2929 in 0.294 seconds
+[0m13:00:51.085289 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:51.085641 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+alter table "afive_dw"."silver"."silver_financial_statements_scd2__dbt_tmp" rename to "silver_financial_statements_scd2"
+[0m13:00:51.086481 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m13:00:51.087372 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: COMMIT
+[0m13:00:51.087700 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:51.087979 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: COMMIT
+[0m13:00:51.091519 [debug] [Thread-2 (]: SQL status: COMMIT in 0.003 seconds
+[0m13:00:51.092933 [debug] [Thread-2 (]: Applying DROP to: "afive_dw"."silver"."silver_financial_statements_scd2__dbt_backup"
+[0m13:00:51.094561 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:00:51.094909 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+drop table if exists "afive_dw"."silver"."silver_financial_statements_scd2__dbt_backup" cascade
+[0m13:00:51.095377 [debug] [Thread-2 (]: SQL status: DROP TABLE in 0.000 seconds
+[0m13:00:51.096242 [debug] [Thread-2 (]: On model.afive_dw.silver_financial_statements_scd2: Close
+[0m13:00:51.096734 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': '0a7e9707-bb46-4fb5-a592-f1c6f50c540d', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c60ad5910>]}
+[0m13:00:51.097221 [info ] [Thread-2 (]: 2 of 2 OK created sql table model silver.silver_financial_statements_scd2 ...... [[32mSELECT 2929[0m in 0.33s]
+[0m13:00:51.097666 [debug] [Thread-2 (]: Finished running node model.afive_dw.silver_financial_statements_scd2
+[0m13:00:51.099626 [debug] [MainThread]: On master: COMMIT
+[0m13:00:51.100057 [debug] [MainThread]: Using postgres connection "master"
+[0m13:00:51.100403 [debug] [MainThread]: On master: COMMIT
+[0m13:00:51.100765 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m13:00:51.106031 [debug] [MainThread]: SQL status: COMMIT in 0.005 seconds
+[0m13:00:51.106376 [debug] [MainThread]: On master: Close
+[0m13:00:51.106791 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m13:00:51.107227 [debug] [MainThread]: Connection 'model.afive_dw.silver_financial_statements_scd2' was properly closed.
+[0m13:00:51.107604 [debug] [MainThread]: Connection 'model.afive_dw.stg_sec_facts' was properly closed.
+[0m13:00:51.107929 [info ] [MainThread]: 
+[0m13:00:51.108238 [info ] [MainThread]: Finished running 1 table model, 1 view model in 0 hours 0 minutes and 0.49 seconds (0.49s).
+[0m13:00:51.108772 [debug] [MainThread]: Command end result
+[0m13:00:51.129392 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m13:00:51.131123 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m13:00:51.132694 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m13:00:51.136953 [debug] [MainThread]: Wrote artifact RunExecutionResult to dbt_afive/target/run_results.json
+[0m13:00:51.137258 [info ] [MainThread]: 
+[0m13:00:51.137584 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m13:00:51.137853 [info ] [MainThread]: 
+[0m13:00:51.138132 [info ] [MainThread]: Done. PASS=2 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=2
+[0m13:00:51.138657 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 1.0968347, "process_in_blocks": "0", "process_kernel_time": 0.084019, "process_mem_max_rss": "149192", "process_out_blocks": "3520", "process_user_time": 1.533847}
+[0m13:00:51.139017 [debug] [MainThread]: Command `dbt run` succeeded at 13:00:51.138963 after 1.10 seconds
+[0m13:00:51.139318 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6975e0d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c697431d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7e0c6977fc50>]}
+[0m13:00:51.139616 [debug] [MainThread]: Flushing usage events
+[0m13:00:52.529170 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m13:18:03.702358 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e067ace3c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e0696b8f50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e06614f890>]}
+
+
+============================== 13:18:03.704942 | fff3f925-7f31-4337-85e7-401b596c9e07 ==============================
+[0m13:18:03.704942 [info ] [MainThread]: Running with dbt=1.12.5
+[0m13:18:03.705377 [debug] [MainThread]: running dbt with arguments {'debug': 'False', 'printer_width': '80', 'maximum_seed_size_mib': '1', 'empty': 'False', 'static_parser': 'True', 'target_path': 'None', 'log_cache_events': 'False', 'quiet': 'False', 'write_json': 'True', 'indirect_selection': 'eager', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'hints_enabled': 'True', 'introspect': 'True', 'no_print': 'None', 'warn_error': 'None', 'send_anonymous_usage_stats': 'True', 'partial_parse': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'profiles_dir': 'dbt_afive', 'log_path': 'dbt_afive/logs', 'fail_fast': 'False', 'use_experimental_parser': 'False', 'invocation_command': 'dbt run --project-dir dbt_afive --profiles-dir dbt_afive', 'version_check': 'True', 'use_colors': 'True'}
+[0m13:18:03.807705 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'project_id', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e066219a70>]}
+[0m13:18:03.851496 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'adapter_info', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e0657168b0>]}
+[0m13:18:03.852242 [info ] [MainThread]: Registered adapter: postgres=1.11.0
+[0m13:18:03.885224 [debug] [MainThread]: checksum: 8ab685611d02c286f685be434a87832f07a83189d507affa7bb3d8246c36ee3f, vars: {}, profile: afive_dw, target: dev, version: 1.12.5
+[0m13:18:03.961269 [debug] [MainThread]: Partial parsing enabled: 0 files deleted, 3 files added, 0 files changed.
+[0m13:18:03.961748 [debug] [MainThread]: Partial parsing: added file: afive_dw://models/gold/fact_quarterly_financials.sql
+[0m13:18:03.962054 [debug] [MainThread]: Partial parsing: added file: afive_dw://models/gold/dim_company.sql
+[0m13:18:03.962328 [debug] [MainThread]: Partial parsing: added file: afive_dw://models/gold/fact_daily_market_valuation.sql
+[0m13:18:04.155026 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'load_project', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e065eaf650>]}
+[0m13:18:04.222400 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m13:18:04.224549 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m13:18:04.232054 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m13:18:04.237699 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'resource_counts', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e063f9d040>]}
+[0m13:18:04.238088 [info ] [MainThread]: Found 7 models, 4 data tests, 2 sources, 478 macros
+[0m13:18:04.238393 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e063b0ce50>]}
+[0m13:18:04.239941 [info ] [MainThread]: 
+[0m13:18:04.240279 [info ] [MainThread]: Concurrency: 4 threads (target='dev')
+[0m13:18:04.240542 [info ] [MainThread]: 
+[0m13:18:04.240958 [debug] [MainThread]: Acquiring new postgres connection 'master'
+[0m13:18:04.243892 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m13:18:04.249903 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m13:18:04.251345 [debug] [ThreadPool]: Acquiring new postgres connection 'list_afive_dw'
+[0m13:18:04.263237 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m13:18:04.264177 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m13:18:04.264470 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m13:18:04.264905 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m13:18:04.263681 [debug] [ThreadPool]: Using postgres connection "list_afive_dw"
+[0m13:18:04.265835 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m13:18:04.266298 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m13:18:04.265372 [debug] [ThreadPool]: On list_afive_dw: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw"} */
+
+    select distinct nspname from pg_namespace
+  
+[0m13:18:04.266810 [debug] [ThreadPool]: Opening a new connection, currently in state init
+[0m13:18:04.275115 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.009 seconds
+[0m13:18:04.275977 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m13:18:04.276380 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.010 seconds
+[0m13:18:04.277576 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m13:18:04.278332 [debug] [ThreadPool]: SQL status: SELECT 8 in 0.014 seconds
+[0m13:18:04.279211 [debug] [ThreadPool]: On list_afive_dw: Close
+[0m13:18:04.280784 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_bronze)
+[0m13:18:04.286290 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_bronze"
+[0m13:18:04.288312 [debug] [ThreadPool]: On list_afive_dw_bronze: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_bronze"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'bronze'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'bronze'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'bronze'
+  
+[0m13:18:04.288835 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m13:18:04.286554 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_gold)
+[0m13:18:04.287802 [debug] [ThreadPool]: Re-using an available connection from the pool (formerly list_afive_dw, now list_afive_dw_silver)
+[0m13:18:04.291068 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_silver"
+[0m13:18:04.291380 [debug] [ThreadPool]: On list_afive_dw_silver: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_silver"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'silver'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'silver'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'silver'
+  
+[0m13:18:04.290146 [debug] [ThreadPool]: Using postgres connection "list_afive_dw_gold"
+[0m13:18:04.291988 [debug] [ThreadPool]: On list_afive_dw_gold: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "list_afive_dw_gold"} */
+select
+      'afive_dw' as database,
+      tablename as name,
+      schemaname as schema,
+      'table' as type
+    from pg_tables
+    where schemaname ilike 'gold'
+    union all
+    select
+      'afive_dw' as database,
+      viewname as name,
+      schemaname as schema,
+      'view' as type
+    from pg_views
+    where schemaname ilike 'gold'
+    union all
+    select
+      'afive_dw' as database,
+      matviewname as name,
+      schemaname as schema,
+      'materialized_view' as type
+    from pg_matviews
+    where schemaname ilike 'gold'
+    union all
+    select distinct
+     'afive_dw' as database,
+     proname as name,
+     ns.nspname as schema,
+     'function' as type
+    from pg_proc
+     join pg_namespace as ns on pronamespace = ns.oid
+    where ns.nspname ilike 'gold'
+  
+[0m13:18:04.292487 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m13:18:04.291657 [debug] [ThreadPool]: Opening a new connection, currently in state closed
+[0m13:18:04.300285 [debug] [ThreadPool]: SQL status: SELECT 5 in 0.011 seconds
+[0m13:18:04.301244 [debug] [ThreadPool]: On list_afive_dw_bronze: ROLLBACK
+[0m13:18:04.301736 [debug] [ThreadPool]: On list_afive_dw_bronze: Close
+[0m13:18:04.305112 [debug] [ThreadPool]: SQL status: SELECT 0 in 0.013 seconds
+[0m13:18:04.305879 [debug] [ThreadPool]: On list_afive_dw_gold: ROLLBACK
+[0m13:18:04.306230 [debug] [ThreadPool]: SQL status: SELECT 2 in 0.015 seconds
+[0m13:18:04.307275 [debug] [ThreadPool]: On list_afive_dw_silver: ROLLBACK
+[0m13:18:04.306536 [debug] [ThreadPool]: On list_afive_dw_gold: Close
+[0m13:18:04.307760 [debug] [ThreadPool]: On list_afive_dw_silver: Close
+[0m13:18:04.310422 [debug] [MainThread]: Using postgres connection "master"
+[0m13:18:04.310774 [debug] [MainThread]: On master: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "connection_name": "master"} */
+select distinct
+        dependent_namespace.nspname as dependent_schema,
+        dependent_class.relname as dependent_name,
+        referenced_namespace.nspname as referenced_schema,
+        referenced_class.relname as referenced_name
+
+    -- Query for views: views are entries in pg_class with an entry in pg_rewrite, but we avoid
+    -- a seq scan on pg_rewrite by leveraging the fact there is an "internal" row in pg_depend for
+    -- the view...
+    from pg_class as dependent_class
+    join pg_namespace as dependent_namespace on dependent_namespace.oid = dependent_class.relnamespace
+    join pg_depend as dependent_depend on dependent_depend.refobjid = dependent_class.oid
+        and dependent_depend.classid = 'pg_rewrite'::regclass
+        and dependent_depend.refclassid = 'pg_class'::regclass
+        and dependent_depend.deptype = 'i'
+
+    -- ... and via pg_depend (that has a row per column, hence the need for "distinct" above, and
+    -- making sure to exclude the internal row to avoid a view appearing to depend on itself)...
+    join pg_depend as joining_depend on joining_depend.objid = dependent_depend.objid
+        and joining_depend.classid = 'pg_rewrite'::regclass
+        and joining_depend.refclassid = 'pg_class'::regclass
+        and joining_depend.refobjid != dependent_depend.refobjid
+
+    -- ... we can find the tables they query from in pg_class, but excluding system tables. Note we
+    -- don't need need to exclude _dependent_ system tables, because they only query from other
+    -- system tables, and so are automatically excluded by excluding _referenced_ system tables
+    join pg_class as referenced_class on referenced_class.oid = joining_depend.refobjid
+    join pg_namespace as referenced_namespace on referenced_namespace.oid = referenced_class.relnamespace
+        and referenced_namespace.nspname != 'information_schema'
+        and referenced_namespace.nspname not like 'pg\_%'
+
+    order by
+        dependent_schema, dependent_name, referenced_schema, referenced_name;
+[0m13:18:04.311077 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m13:18:04.318192 [debug] [MainThread]: SQL status: SELECT 2 in 0.007 seconds
+[0m13:18:04.319215 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'runnable_timing', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e063b02b60>]}
+[0m13:18:04.319583 [debug] [MainThread]: On master: ROLLBACK
+[0m13:18:04.319955 [debug] [MainThread]: On master: COMMIT
+[0m13:18:04.320217 [debug] [MainThread]: Using postgres connection "master"
+[0m13:18:04.320471 [debug] [MainThread]: On master: COMMIT
+[0m13:18:04.320810 [debug] [MainThread]: SQL status: COMMIT in 0.000 seconds
+[0m13:18:04.321081 [debug] [MainThread]: On master: Close
+[0m13:18:04.322883 [debug] [Thread-1 (]: Began running node model.afive_dw.stg_market_prices
+[0m13:18:04.323527 [debug] [Thread-2 (]: Began running node model.afive_dw.stg_sec_facts
+[0m13:18:04.324267 [info ] [Thread-1 (]: 1 of 7 START sql view model bronze.stg_market_prices ........................... [RUN]
+[0m13:18:04.325680 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly list_afive_dw_silver, now model.afive_dw.stg_market_prices)
+[0m13:18:04.326206 [debug] [Thread-1 (]: Began compiling node model.afive_dw.stg_market_prices
+[0m13:18:04.325010 [info ] [Thread-2 (]: 2 of 7 START sql view model bronze.stg_sec_facts ............................... [RUN]
+[0m13:18:04.332139 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly list_afive_dw_gold, now model.afive_dw.stg_sec_facts)
+[0m13:18:04.332697 [debug] [Thread-2 (]: Began compiling node model.afive_dw.stg_sec_facts
+[0m13:18:04.331626 [debug] [Thread-1 (]: Writing injected SQL for node "model.afive_dw.stg_market_prices"
+[0m13:18:04.334747 [debug] [Thread-2 (]: Writing injected SQL for node "model.afive_dw.stg_sec_facts"
+[0m13:18:04.335515 [debug] [Thread-1 (]: Began executing node model.afive_dw.stg_market_prices
+[0m13:18:04.341083 [debug] [Thread-2 (]: Began executing node model.afive_dw.stg_sec_facts
+[0m13:18:04.357696 [debug] [Thread-2 (]: Writing runtime sql for node "model.afive_dw.stg_sec_facts"
+[0m13:18:04.357973 [debug] [Thread-1 (]: Writing runtime sql for node "model.afive_dw.stg_market_prices"
+[0m13:18:04.358488 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:18:04.359153 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+
+  create view "afive_dw"."bronze"."stg_sec_facts__dbt_tmp"
+    
+    
+  as (
+    with raw_filings as (
+    select
+        ticker,
+        cik,
+        payload
+    from "afive_dw"."bronze"."raw_sec_filings"
+),
+
+-- Define target GAAP taxonomy tags to extract from the raw JSONB
+target_tags as (
+    select unnest(array[
+        -- Income Statement
+        'Revenues',
+        'SalesRevenueNet',
+        'OperatingIncomeLoss',
+        'NetIncomeLoss',
+        -- Balance Sheet
+        'Assets',
+        'AssetsCurrent',
+        'Liabilities',
+        'LiabilitiesCurrent',
+        'StockholdersEquity',
+        'CashAndCashEquivalentsAtCarryingValue',
+        -- Cash Flow Statement
+        'NetCashProvidedByUsedInOperatingActivities',
+        'PaymentsToAcquirePropertyPlantAndEquipment'
+    ]) as tag_name
+),
+
+extracted_facts as (
+    select
+        f.ticker,
+        f.cik,
+        t.tag_name,
+        jsonb_array_elements(f.payload->'facts'->'us-gaap'->t.tag_name->'units'->'USD') as unit_node
+    from raw_filings f
+    cross join target_tags t
+    where f.payload->'facts'->'us-gaap' ? t.tag_name
+),
+
+parsed as (
+    select
+        ticker,
+        cik,
+        tag_name as gaap_tag,
+        unit_node->>'form' as form_type,
+        (unit_node->>'fy')::int as fiscal_year,
+        upper(unit_node->>'fp') as fiscal_period,
+        (unit_node->>'filed')::date as filed_date,
+        (unit_node->>'start')::date as period_start_date,
+        (unit_node->>'end')::date as period_end_date,
+        (unit_node->>'val')::numeric(20, 2) as amount,
+        unit_node->>'accn' as accession_number
+    from extracted_facts
+    where unit_node->>'val' is not null
+      and unit_node->>'fy' is not null
+      and unit_node->>'fp' in ('Q1', 'Q2', 'Q3', 'FY')
+)
+
+select distinct * from parsed
+  );
+[0m13:18:04.359479 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m13:18:04.358824 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m13:18:04.359892 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+
+  create view "afive_dw"."bronze"."stg_market_prices__dbt_tmp"
+    
+    
+  as (
+    with raw_data as (
+    select * from "afive_dw"."bronze"."raw_market_prices"
+),
+
+cleaned as (
+    select
+        upper(trim(ticker)) as ticker,
+        trade_date::date as trade_date,
+        open_price::numeric(14, 4) as open_price,
+        high_price::numeric(14, 4) as high_price,
+        low_price::numeric(14, 4) as low_price,
+        close_price::numeric(14, 4) as close_price,
+        adj_close::numeric(14, 4) as adj_close,
+        volume::bigint as volume,
+        coalesce(dividend_amount::numeric(14, 4), 0.0) as dividend_amount,
+        coalesce(split_coefficient::numeric(10, 4), 1.0) as split_coefficient,
+        ingested_at
+    from raw_data
+)
+
+select * from cleaned
+  );
+[0m13:18:04.360253 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m13:18:04.368067 [debug] [Thread-1 (]: SQL status: CREATE VIEW in 0.008 seconds
+[0m13:18:04.372018 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m13:18:04.372824 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+alter table "afive_dw"."bronze"."stg_market_prices" rename to "stg_market_prices__dbt_backup"
+[0m13:18:04.372442 [debug] [Thread-2 (]: SQL status: CREATE VIEW in 0.013 seconds
+[0m13:18:04.374387 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:18:04.375026 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+alter table "afive_dw"."bronze"."stg_sec_facts" rename to "stg_sec_facts__dbt_backup"
+[0m13:18:04.374731 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.002 seconds
+[0m13:18:04.376199 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m13:18:04.376851 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+alter table "afive_dw"."bronze"."stg_market_prices__dbt_tmp" rename to "stg_market_prices"
+[0m13:18:04.376541 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m13:18:04.378014 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:18:04.378680 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+alter table "afive_dw"."bronze"."stg_sec_facts__dbt_tmp" rename to "stg_sec_facts"
+[0m13:18:04.378354 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m13:18:04.384849 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.006 seconds
+[0m13:18:04.391394 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: COMMIT
+[0m13:18:04.392117 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:18:04.392576 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: COMMIT
+[0m13:18:04.390247 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: COMMIT
+[0m13:18:04.393021 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m13:18:04.393319 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: COMMIT
+[0m13:18:04.395971 [debug] [Thread-2 (]: SQL status: COMMIT in 0.003 seconds
+[0m13:18:04.399337 [debug] [Thread-2 (]: Applying DROP to: "afive_dw"."bronze"."stg_sec_facts__dbt_backup"
+[0m13:18:04.402324 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.stg_sec_facts"
+[0m13:18:04.399713 [debug] [Thread-1 (]: SQL status: COMMIT in 0.006 seconds
+[0m13:18:04.403582 [debug] [Thread-1 (]: Applying DROP to: "afive_dw"."bronze"."stg_market_prices__dbt_backup"
+[0m13:18:04.404015 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.stg_market_prices"
+[0m13:18:04.402665 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_sec_facts"} */
+drop view if exists "afive_dw"."bronze"."stg_sec_facts__dbt_backup" cascade
+[0m13:18:04.404311 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.stg_market_prices"} */
+drop view if exists "afive_dw"."bronze"."stg_market_prices__dbt_backup" cascade
+[0m13:18:04.406499 [debug] [Thread-2 (]: SQL status: DROP VIEW in 0.002 seconds
+[0m13:18:04.408029 [debug] [Thread-2 (]: On model.afive_dw.stg_sec_facts: Close
+[0m13:18:04.408394 [debug] [Thread-1 (]: SQL status: DROP VIEW in 0.004 seconds
+[0m13:18:04.409243 [debug] [Thread-1 (]: On model.afive_dw.stg_market_prices: Close
+[0m13:18:04.410597 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e063f8ff50>]}
+[0m13:18:04.410968 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e06780f8b0>]}
+[0m13:18:04.411480 [info ] [Thread-2 (]: 2 of 7 OK created sql view model bronze.stg_sec_facts .......................... [[32mCREATE VIEW[0m in 0.08s]
+[0m13:18:04.412508 [debug] [Thread-2 (]: Finished running node model.afive_dw.stg_sec_facts
+[0m13:18:04.412014 [info ] [Thread-1 (]: 1 of 7 OK created sql view model bronze.stg_market_prices ...................... [[32mCREATE VIEW[0m in 0.08s]
+[0m13:18:04.413036 [debug] [Thread-1 (]: Finished running node model.afive_dw.stg_market_prices
+[0m13:18:04.414126 [debug] [Thread-2 (]: Began running node model.afive_dw.silver_market_prices
+[0m13:18:04.414541 [info ] [Thread-2 (]: 5 of 7 START sql table model silver.silver_market_prices ....................... [RUN]
+[0m13:18:04.415515 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly model.afive_dw.stg_sec_facts, now model.afive_dw.silver_market_prices)
+[0m13:18:04.415861 [debug] [Thread-2 (]: Began compiling node model.afive_dw.silver_market_prices
+[0m13:18:04.417513 [debug] [Thread-2 (]: Writing injected SQL for node "model.afive_dw.silver_market_prices"
+[0m13:18:04.414973 [debug] [Thread-3 (]: Began running node model.afive_dw.dim_company
+[0m13:18:04.418200 [info ] [Thread-3 (]: 3 of 7 START sql table model gold.dim_company .................................. [RUN]
+[0m13:18:04.420004 [debug] [Thread-3 (]: Re-using an available connection from the pool (formerly list_afive_dw_bronze, now model.afive_dw.dim_company)
+[0m13:18:04.420499 [debug] [Thread-3 (]: Began compiling node model.afive_dw.dim_company
+[0m13:18:04.422568 [debug] [Thread-3 (]: Writing injected SQL for node "model.afive_dw.dim_company"
+[0m13:18:04.419412 [debug] [Thread-2 (]: Began executing node model.afive_dw.silver_market_prices
+[0m13:18:04.418854 [debug] [Thread-4 (]: Began running node model.afive_dw.silver_financial_statements_scd2
+[0m13:18:04.438326 [info ] [Thread-4 (]: 4 of 7 START sql table model silver.silver_financial_statements_scd2 ........... [RUN]
+[0m13:18:04.439037 [debug] [Thread-4 (]: Acquiring new postgres connection 'model.afive_dw.silver_financial_statements_scd2'
+[0m13:18:04.439537 [debug] [Thread-4 (]: Began compiling node model.afive_dw.silver_financial_statements_scd2
+[0m13:18:04.440878 [debug] [Thread-4 (]: Writing injected SQL for node "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.437631 [debug] [Thread-2 (]: Writing runtime sql for node "model.afive_dw.silver_market_prices"
+[0m13:18:04.441444 [debug] [Thread-3 (]: Began executing node model.afive_dw.dim_company
+[0m13:18:04.444485 [debug] [Thread-3 (]: Writing runtime sql for node "model.afive_dw.dim_company"
+[0m13:18:04.442325 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m13:18:04.445061 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+
+  
+    
+
+  create  table "afive_dw"."silver"."silver_market_prices__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with staged as (
+    select * from "afive_dw"."bronze"."stg_market_prices"
+),
+
+enriched as (
+    select
+        ticker,
+        trade_date,
+        open_price,
+        high_price,
+        low_price,
+        close_price,
+        adj_close,
+        volume,
+        dividend_amount,
+        split_coefficient,
+        -- Daily percentage change in adjusted close
+        round(
+            (adj_close - lag(adj_close) over (partition by ticker order by trade_date)) 
+            / nullif(lag(adj_close) over (partition by ticker order by trade_date), 0),
+            6
+        ) as daily_return,
+        -- Liquidity metric: Traded Dollar Volume
+        round(close_price * volume, 2) as dollar_volume,
+        -- 20-Day and 50-Day Simple Moving Averages
+        round(avg(adj_close) over (
+            partition by ticker 
+            order by trade_date 
+            rows between 19 preceding and current row
+        ), 4) as sma_20,
+        round(avg(adj_close) over (
+            partition by ticker 
+            order by trade_date 
+            rows between 49 preceding and current row
+        ), 4) as sma_50,
+        ingested_at as updated_at
+    from staged
+)
+
+select * from enriched
+  );
+  
+[0m13:18:04.445386 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m13:18:04.441929 [debug] [Thread-4 (]: Began executing node model.afive_dw.silver_financial_statements_scd2
+[0m13:18:04.447852 [debug] [Thread-4 (]: Writing runtime sql for node "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.448501 [debug] [Thread-4 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.449038 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+
+  
+    
+
+  create  table "afive_dw"."silver"."silver_financial_statements_scd2__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with staged_facts as (
+    select * from "afive_dw"."bronze"."stg_sec_facts"
+),
+
+ordered_facts as (
+    select
+        ticker,
+        cik,
+        gaap_tag,
+        form_type,
+        fiscal_year,
+        fiscal_period,
+        period_start_date,
+        period_end_date,
+        amount,
+        accession_number,
+        filed_date as valid_from,
+        lead(filed_date) over (
+            partition by ticker, fiscal_year, fiscal_period, gaap_tag 
+            order by filed_date asc, accession_number asc
+        ) as next_filed_date,
+        row_number() over (
+            partition by ticker, fiscal_year, fiscal_period, gaap_tag 
+            order by filed_date desc, accession_number desc
+        ) as recency_rank
+    from staged_facts
+),
+
+scd2 as (
+    select
+        -- Surrogate Key
+        md5(concat_ws('||', ticker, fiscal_year, fiscal_period, gaap_tag, valid_from)) as statement_sk,
+        ticker,
+        cik,
+        gaap_tag,
+        form_type,
+        fiscal_year,
+        fiscal_period,
+        period_start_date,
+        period_end_date,
+        amount,
+        accession_number,
+        valid_from,
+        coalesce(next_filed_date, '9999-12-31'::date) as valid_to,
+        case when recency_rank = 1 then true else false end as is_current,
+        current_timestamp as dbt_updated_at
+    from ordered_facts
+)
+
+select * from scd2
+  );
+  
+[0m13:18:04.450129 [debug] [Thread-4 (]: Opening a new connection, currently in state init
+[0m13:18:04.449678 [debug] [Thread-3 (]: Using postgres connection "model.afive_dw.dim_company"
+[0m13:18:04.450592 [debug] [Thread-3 (]: On model.afive_dw.dim_company: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.dim_company"} */
+
+  
+    
+
+  create  table "afive_dw"."gold"."dim_company__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with sec_entities as (
+    select
+        ticker,
+        cik,
+        payload->>'entityName' as company_name,
+        payload->>'sic' as sic_code,
+        payload->>'sicDescription' as industry_description
+    from "afive_dw"."bronze"."raw_sec_filings"
+),
+
+market_tickers as (
+    select distinct ticker from "afive_dw"."bronze"."stg_market_prices"
+),
+
+combined as (
+    select
+        m.ticker,
+        s.cik,
+        coalesce(s.company_name, m.ticker) as company_name,
+        case 
+            when m.ticker like '%.KL' then 'MYR'
+            else 'USD'
+        end as reporting_currency,
+        case 
+            when m.ticker like '%.KL' then 'Bursa Malaysia'
+            else 'US Equities (SEC)'
+        end as primary_exchange,
+        coalesce(s.industry_description, 'General Equity') as industry
+    from market_tickers m
+    left join sec_entities s on m.ticker = s.ticker
+)
+
+select
+    -- Surrogate Key
+    md5(ticker) as company_sk,
+    ticker,
+    cik,
+    company_name,
+    reporting_currency,
+    primary_exchange,
+    industry,
+    true as is_active,
+    current_timestamp as created_at
+from combined
+  );
+  
+[0m13:18:04.451023 [debug] [Thread-3 (]: Opening a new connection, currently in state closed
+[0m13:18:04.455803 [debug] [Thread-2 (]: SQL status: SELECT 48 in 0.010 seconds
+[0m13:18:04.459671 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m13:18:04.460045 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+alter table "afive_dw"."silver"."silver_market_prices" rename to "silver_market_prices__dbt_backup"
+[0m13:18:04.460904 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.462468 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m13:18:04.462801 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+alter table "afive_dw"."silver"."silver_market_prices__dbt_tmp" rename to "silver_market_prices"
+[0m13:18:04.463340 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.464268 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: COMMIT
+[0m13:18:04.464622 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m13:18:04.464990 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: COMMIT
+[0m13:18:04.466786 [debug] [Thread-2 (]: SQL status: COMMIT in 0.001 seconds
+[0m13:18:04.468772 [debug] [Thread-2 (]: Applying DROP to: "afive_dw"."silver"."silver_market_prices__dbt_backup"
+[0m13:18:04.471869 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.silver_market_prices"
+[0m13:18:04.472482 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_market_prices"} */
+drop table if exists "afive_dw"."silver"."silver_market_prices__dbt_backup" cascade
+[0m13:18:04.474978 [debug] [Thread-2 (]: SQL status: DROP TABLE in 0.002 seconds
+[0m13:18:04.476028 [debug] [Thread-2 (]: On model.afive_dw.silver_market_prices: Close
+[0m13:18:04.476615 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e059d37e30>]}
+[0m13:18:04.477381 [info ] [Thread-2 (]: 5 of 7 OK created sql table model silver.silver_market_prices .................. [[32mSELECT 48[0m in 0.06s]
+[0m13:18:04.478042 [debug] [Thread-2 (]: Finished running node model.afive_dw.silver_market_prices
+[0m13:18:04.485899 [debug] [Thread-3 (]: SQL status: SELECT 3 in 0.035 seconds
+[0m13:18:04.487578 [debug] [Thread-3 (]: Using postgres connection "model.afive_dw.dim_company"
+[0m13:18:04.487906 [debug] [Thread-3 (]: On model.afive_dw.dim_company: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.dim_company"} */
+alter table "afive_dw"."gold"."dim_company__dbt_tmp" rename to "dim_company"
+[0m13:18:04.488510 [debug] [Thread-3 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.489356 [debug] [Thread-3 (]: On model.afive_dw.dim_company: COMMIT
+[0m13:18:04.489685 [debug] [Thread-3 (]: Using postgres connection "model.afive_dw.dim_company"
+[0m13:18:04.489983 [debug] [Thread-3 (]: On model.afive_dw.dim_company: COMMIT
+[0m13:18:04.491295 [debug] [Thread-3 (]: SQL status: COMMIT in 0.001 seconds
+[0m13:18:04.492338 [debug] [Thread-3 (]: Applying DROP to: "afive_dw"."gold"."dim_company__dbt_backup"
+[0m13:18:04.492795 [debug] [Thread-3 (]: Using postgres connection "model.afive_dw.dim_company"
+[0m13:18:04.493090 [debug] [Thread-3 (]: On model.afive_dw.dim_company: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.dim_company"} */
+drop table if exists "afive_dw"."gold"."dim_company__dbt_backup" cascade
+[0m13:18:04.493587 [debug] [Thread-3 (]: SQL status: DROP TABLE in 0.000 seconds
+[0m13:18:04.494456 [debug] [Thread-3 (]: On model.afive_dw.dim_company: Close
+[0m13:18:04.494956 [debug] [Thread-3 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e063f39150>]}
+[0m13:18:04.495439 [info ] [Thread-3 (]: 3 of 7 OK created sql table model gold.dim_company ............................. [[32mSELECT 3[0m in 0.07s]
+[0m13:18:04.495896 [debug] [Thread-3 (]: Finished running node model.afive_dw.dim_company
+[0m13:18:04.747358 [debug] [Thread-4 (]: SQL status: SELECT 2929 in 0.297 seconds
+[0m13:18:04.749955 [debug] [Thread-4 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.750359 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+alter table "afive_dw"."silver"."silver_financial_statements_scd2" rename to "silver_financial_statements_scd2__dbt_backup"
+[0m13:18:04.751325 [debug] [Thread-4 (]: SQL status: ALTER TABLE in 0.001 seconds
+[0m13:18:04.752626 [debug] [Thread-4 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.752951 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+alter table "afive_dw"."silver"."silver_financial_statements_scd2__dbt_tmp" rename to "silver_financial_statements_scd2"
+[0m13:18:04.753736 [debug] [Thread-4 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.754580 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: COMMIT
+[0m13:18:04.754898 [debug] [Thread-4 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.755172 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: COMMIT
+[0m13:18:04.759732 [debug] [Thread-4 (]: SQL status: COMMIT in 0.004 seconds
+[0m13:18:04.760681 [debug] [Thread-4 (]: Applying DROP to: "afive_dw"."silver"."silver_financial_statements_scd2__dbt_backup"
+[0m13:18:04.761258 [debug] [Thread-4 (]: Using postgres connection "model.afive_dw.silver_financial_statements_scd2"
+[0m13:18:04.761583 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.silver_financial_statements_scd2"} */
+drop table if exists "afive_dw"."silver"."silver_financial_statements_scd2__dbt_backup" cascade
+[0m13:18:04.764380 [debug] [Thread-4 (]: SQL status: DROP TABLE in 0.002 seconds
+[0m13:18:04.765366 [debug] [Thread-4 (]: On model.afive_dw.silver_financial_statements_scd2: Close
+[0m13:18:04.765866 [debug] [Thread-4 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e0601a2ba0>]}
+[0m13:18:04.766357 [info ] [Thread-4 (]: 4 of 7 OK created sql table model silver.silver_financial_statements_scd2 ...... [[32mSELECT 2929[0m in 0.33s]
+[0m13:18:04.766791 [debug] [Thread-4 (]: Finished running node model.afive_dw.silver_financial_statements_scd2
+[0m13:18:04.767456 [debug] [Thread-1 (]: Began running node model.afive_dw.fact_quarterly_financials
+[0m13:18:04.767874 [info ] [Thread-1 (]: 6 of 7 START sql table model gold.fact_quarterly_financials .................... [RUN]
+[0m13:18:04.768240 [debug] [Thread-1 (]: Re-using an available connection from the pool (formerly model.afive_dw.stg_market_prices, now model.afive_dw.fact_quarterly_financials)
+[0m13:18:04.768554 [debug] [Thread-1 (]: Began compiling node model.afive_dw.fact_quarterly_financials
+[0m13:18:04.770007 [debug] [Thread-1 (]: Writing injected SQL for node "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.770424 [debug] [Thread-1 (]: Began executing node model.afive_dw.fact_quarterly_financials
+[0m13:18:04.771908 [debug] [Thread-1 (]: Writing runtime sql for node "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.772329 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.772683 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_quarterly_financials"} */
+
+  
+    
+
+  create  table "afive_dw"."gold"."fact_quarterly_financials__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with scd2_current as (
+    select *
+    from "afive_dw"."silver"."silver_financial_statements_scd2"
+    where is_current = true
+),
+
+pivoted as (
+    select
+        ticker,
+        cik,
+        fiscal_year,
+        fiscal_period,
+        max(period_end_date) as period_end_date,
+        max(valid_from) as filing_date,
+        max(accession_number) as accession_number,
+
+        -- Income Statement Line Items
+        max(case when gaap_tag in ('Revenues', 'SalesRevenueNet') then amount end) as total_revenue,
+        max(case when gaap_tag = 'OperatingIncomeLoss' then amount end) as operating_income,
+        max(case when gaap_tag = 'NetIncomeLoss' then amount end) as net_income,
+
+        -- Balance Sheet Line Items
+        max(case when gaap_tag = 'Assets' then amount end) as total_assets,
+        max(case when gaap_tag = 'AssetsCurrent' then amount end) as current_assets,
+        max(case when gaap_tag = 'Liabilities' then amount end) as total_liabilities,
+        max(case when gaap_tag = 'LiabilitiesCurrent' then amount end) as current_liabilities,
+        max(case when gaap_tag = 'StockholdersEquity' then amount end) as stockholders_equity,
+        max(case when gaap_tag = 'CashAndCashEquivalentsAtCarryingValue' then amount end) as cash_and_cash_equivalents,
+
+        -- Cash Flow Statement Line Items
+        max(case when gaap_tag = 'NetCashProvidedByUsedInOperatingActivities' then amount end) as operating_cash_flow,
+        max(case when gaap_tag = 'PaymentsToAcquirePropertyPlantAndEquipment' then amount end) as capital_expenditures
+    from scd2_current
+    group by ticker, cik, fiscal_year, fiscal_period
+),
+
+ratios as (
+    select
+        -- Surrogate Key
+        md5(concat_ws('||', ticker, fiscal_year, fiscal_period)) as financial_sk,
+        md5(ticker) as company_sk,
+        ticker,
+        fiscal_year,
+        fiscal_period,
+        period_end_date,
+        filing_date,
+        accession_number,
+        total_revenue,
+        operating_income,
+        net_income,
+        total_assets,
+        current_assets,
+        total_liabilities,
+        current_liabilities,
+        stockholders_equity,
+        cash_and_cash_equivalents,
+        operating_cash_flow,
+        capital_expenditures,
+
+        -- Derived Free Cash Flow
+        (coalesce(operating_cash_flow, 0) - coalesce(capital_expenditures, 0)) as free_cash_flow,
+
+        -- Financial Margins & Returns
+        round(operating_income / nullif(total_revenue, 0), 4) as operating_margin,
+        round(net_income / nullif(total_revenue, 0), 4) as net_margin,
+        round(net_income / nullif(stockholders_equity, 0), 4) as return_on_equity,
+        round(total_liabilities / nullif(stockholders_equity, 0), 4) as debt_to_equity,
+        round(current_assets / nullif(current_liabilities, 0), 4) as current_ratio,
+        current_timestamp as computed_at
+    from pivoted
+)
+
+select * from ratios
+  );
+  
+[0m13:18:04.773022 [debug] [Thread-1 (]: Opening a new connection, currently in state closed
+[0m13:18:04.785502 [debug] [Thread-1 (]: SQL status: SELECT 101 in 0.012 seconds
+[0m13:18:04.787039 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.787354 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_quarterly_financials"} */
+alter table "afive_dw"."gold"."fact_quarterly_financials__dbt_tmp" rename to "fact_quarterly_financials"
+[0m13:18:04.787876 [debug] [Thread-1 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.788710 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: COMMIT
+[0m13:18:04.789013 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.789287 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: COMMIT
+[0m13:18:04.790424 [debug] [Thread-1 (]: SQL status: COMMIT in 0.001 seconds
+[0m13:18:04.791832 [debug] [Thread-1 (]: Applying DROP to: "afive_dw"."gold"."fact_quarterly_financials__dbt_backup"
+[0m13:18:04.792270 [debug] [Thread-1 (]: Using postgres connection "model.afive_dw.fact_quarterly_financials"
+[0m13:18:04.792566 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_quarterly_financials"} */
+drop table if exists "afive_dw"."gold"."fact_quarterly_financials__dbt_backup" cascade
+[0m13:18:04.793028 [debug] [Thread-1 (]: SQL status: DROP TABLE in 0.000 seconds
+[0m13:18:04.793826 [debug] [Thread-1 (]: On model.afive_dw.fact_quarterly_financials: Close
+[0m13:18:04.794270 [debug] [Thread-1 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e059d23ad0>]}
+[0m13:18:04.794725 [info ] [Thread-1 (]: 6 of 7 OK created sql table model gold.fact_quarterly_financials ............... [[32mSELECT 101[0m in 0.03s]
+[0m13:18:04.795131 [debug] [Thread-1 (]: Finished running node model.afive_dw.fact_quarterly_financials
+[0m13:18:04.795746 [debug] [Thread-2 (]: Began running node model.afive_dw.fact_daily_market_valuation
+[0m13:18:04.796098 [info ] [Thread-2 (]: 7 of 7 START sql table model gold.fact_daily_market_valuation .................. [RUN]
+[0m13:18:04.796434 [debug] [Thread-2 (]: Re-using an available connection from the pool (formerly model.afive_dw.silver_market_prices, now model.afive_dw.fact_daily_market_valuation)
+[0m13:18:04.796720 [debug] [Thread-2 (]: Began compiling node model.afive_dw.fact_daily_market_valuation
+[0m13:18:04.798110 [debug] [Thread-2 (]: Writing injected SQL for node "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.798520 [debug] [Thread-2 (]: Began executing node model.afive_dw.fact_daily_market_valuation
+[0m13:18:04.799958 [debug] [Thread-2 (]: Writing runtime sql for node "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.800374 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.800708 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_daily_market_valuation"} */
+
+  
+    
+
+  create  table "afive_dw"."gold"."fact_daily_market_valuation__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with prices as (
+    select * from "afive_dw"."silver"."silver_market_prices"
+),
+
+financials as (
+    select * from "afive_dw"."gold"."fact_quarterly_financials"
+),
+
+joined as (
+    select
+        -- Daily Surrogate Key
+        md5(concat_ws('||', p.ticker, p.trade_date)) as valuation_sk,
+        md5(p.ticker) as company_sk,
+        p.ticker,
+        p.trade_date,
+        p.close_price,
+        p.adj_close,
+        p.volume,
+        p.dollar_volume,
+        p.daily_return,
+        p.sma_20,
+        p.sma_50,
+        p.dividend_amount,
+
+        -- Point-in-time Financials linkage
+        f.fiscal_year as latest_filed_year,
+        f.fiscal_period as latest_filed_period,
+        f.filing_date,
+        f.total_revenue,
+        f.net_income,
+        f.operating_cash_flow,
+        f.free_cash_flow,
+        f.net_margin,
+        f.return_on_equity,
+
+        -- Price-to-Performance indicators (Relative Yield)
+        round(p.dividend_amount / nullif(p.adj_close, 0), 6) as daily_dividend_yield,
+        current_timestamp as calculated_at
+    from prices p
+    left join lateral (
+        select *
+        from financials f
+        where f.ticker = p.ticker
+          and f.filing_date <= p.trade_date
+        order by f.filing_date desc, f.period_end_date desc
+        limit 1
+    ) f on true
+)
+
+select * from joined
+  );
+  
+[0m13:18:04.801023 [debug] [Thread-2 (]: Opening a new connection, currently in state closed
+[0m13:18:04.813400 [debug] [Thread-2 (]: SQL status: SELECT 48 in 0.012 seconds
+[0m13:18:04.814965 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.815290 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_daily_market_valuation"} */
+alter table "afive_dw"."gold"."fact_daily_market_valuation__dbt_tmp" rename to "fact_daily_market_valuation"
+[0m13:18:04.815817 [debug] [Thread-2 (]: SQL status: ALTER TABLE in 0.000 seconds
+[0m13:18:04.816660 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: COMMIT
+[0m13:18:04.816971 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.817252 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: COMMIT
+[0m13:18:04.818703 [debug] [Thread-2 (]: SQL status: COMMIT in 0.001 seconds
+[0m13:18:04.819981 [debug] [Thread-2 (]: Applying DROP to: "afive_dw"."gold"."fact_daily_market_valuation__dbt_backup"
+[0m13:18:04.820569 [debug] [Thread-2 (]: Using postgres connection "model.afive_dw.fact_daily_market_valuation"
+[0m13:18:04.820976 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: /* {"app": "dbt", "dbt_version": "1.12.5", "profile_name": "afive_dw", "target_name": "dev", "node_id": "model.afive_dw.fact_daily_market_valuation"} */
+drop table if exists "afive_dw"."gold"."fact_daily_market_valuation__dbt_backup" cascade
+[0m13:18:04.821679 [debug] [Thread-2 (]: SQL status: DROP TABLE in 0.000 seconds
+[0m13:18:04.822833 [debug] [Thread-2 (]: On model.afive_dw.fact_daily_market_valuation: Close
+[0m13:18:04.823367 [debug] [Thread-2 (]: Sending event: {'category': 'dbt', 'action': 'run_model', 'label': 'fff3f925-7f31-4337-85e7-401b596c9e07', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e059d234d0>]}
+[0m13:18:04.823865 [info ] [Thread-2 (]: 7 of 7 OK created sql table model gold.fact_daily_market_valuation ............. [[32mSELECT 48[0m in 0.03s]
+[0m13:18:04.824299 [debug] [Thread-2 (]: Finished running node model.afive_dw.fact_daily_market_valuation
+[0m13:18:04.825567 [debug] [MainThread]: On master: COMMIT
+[0m13:18:04.825875 [debug] [MainThread]: Using postgres connection "master"
+[0m13:18:04.826130 [debug] [MainThread]: On master: COMMIT
+[0m13:18:04.826463 [debug] [MainThread]: Opening a new connection, currently in state closed
+[0m13:18:04.830953 [debug] [MainThread]: SQL status: COMMIT in 0.004 seconds
+[0m13:18:04.831264 [debug] [MainThread]: On master: Close
+[0m13:18:04.831609 [debug] [MainThread]: Connection 'master' was properly closed.
+[0m13:18:04.831875 [debug] [MainThread]: Connection 'model.afive_dw.fact_daily_market_valuation' was properly closed.
+[0m13:18:04.832125 [debug] [MainThread]: Connection 'model.afive_dw.fact_quarterly_financials' was properly closed.
+[0m13:18:04.832374 [debug] [MainThread]: Connection 'model.afive_dw.dim_company' was properly closed.
+[0m13:18:04.832629 [debug] [MainThread]: Connection 'model.afive_dw.silver_financial_statements_scd2' was properly closed.
+[0m13:18:04.832959 [info ] [MainThread]: 
+[0m13:18:04.833243 [info ] [MainThread]: Finished running 5 table models, 2 view models in 0 hours 0 minutes and 0.59 seconds (0.59s).
+[0m13:18:04.834080 [debug] [MainThread]: Command end result
+[0m13:18:04.852539 [debug] [MainThread]: Wrote artifact WritableManifest to dbt_afive/target/manifest.json
+[0m13:18:04.854906 [debug] [MainThread]: Wrote artifact SemanticManifest to dbt_afive/target/semantic_manifest.json
+[0m13:18:04.857057 [debug] [MainThread]: Wrote artifact OsiDocument to dbt_afive/target/osi_document.json
+[0m13:18:04.861570 [debug] [MainThread]: Wrote artifact RunExecutionResult to dbt_afive/target/run_results.json
+[0m13:18:04.861954 [info ] [MainThread]: 
+[0m13:18:04.862317 [info ] [MainThread]: [32mCompleted successfully[0m
+[0m13:18:04.862758 [info ] [MainThread]: 
+[0m13:18:04.863062 [info ] [MainThread]: Done. PASS=7 WARN=0 ERROR=0 SKIP=0 NO-OP=0 REUSED=0 TOTAL=7
+[0m13:18:04.863601 [debug] [MainThread]: Resource report: {"command_name": "run", "command_success": true, "command_wall_clock_time": 1.210123, "process_in_blocks": "0", "process_kernel_time": 0.069923, "process_mem_max_rss": "150112", "process_out_blocks": "3816", "process_user_time": 1.691749}
+[0m13:18:04.864000 [debug] [MainThread]: Command `dbt run` succeeded at 13:18:04.863942 after 1.21 seconds
+[0m13:18:04.864319 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e0643a71d0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e068002450>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x72e059d22d50>]}
+[0m13:18:04.864628 [debug] [MainThread]: Flushing usage events
+[0m13:18:06.158765 [debug] [MainThread]: An error was encountered while trying to flush usage events

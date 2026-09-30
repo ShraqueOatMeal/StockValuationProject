@@ -1,0 +1,20 @@
+[2026-09-30T03:40:08.166+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-09-30T03:40:08.180+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dag_market_eod.ingest_sec_GOOGL manual__2026-09-30T03:40:01.939932+00:00 [queued]>
+[2026-09-30T03:40:08.184+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dag_market_eod.ingest_sec_GOOGL manual__2026-09-30T03:40:01.939932+00:00 [queued]>
+[2026-09-30T03:40:08.184+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-09-30T03:40:08.191+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): ingest_sec_GOOGL> on 2026-09-30 03:40:01.939932+00:00
+[2026-09-30T03:40:08.196+0000] {standard_task_runner.py:64} INFO - Started process 293 to run task
+[2026-09-30T03:40:08.198+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dag_market_eod', 'ingest_sec_GOOGL', 'manual__2026-09-30T03:40:01.939932+00:00', '--job-id', '19', '--raw', '--subdir', 'DAGS_FOLDER/dag_market_eod.py', '--cfg-path', '/tmp/tmpm6_ff1eb']
+[2026-09-30T03:40:08.199+0000] {standard_task_runner.py:91} INFO - Job 19: Subtask ingest_sec_GOOGL
+[2026-09-30T03:40:08.234+0000] {task_command.py:426} INFO - Running <TaskInstance: dag_market_eod.ingest_sec_GOOGL manual__2026-09-30T03:40:01.939932+00:00 [running]> on host ba8db4610040
+[2026-09-30T03:40:08.294+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afive' AIRFLOW_CTX_DAG_ID='dag_market_eod' AIRFLOW_CTX_TASK_ID='ingest_sec_GOOGL' AIRFLOW_CTX_EXECUTION_DATE='2026-09-30T03:40:01.939932+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2026-09-30T03:40:01.939932+00:00'
+[2026-09-30T03:40:08.295+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-09-30T03:40:08.304+0000] {logging_mixin.py:188} INFO - Fetching SEC XBRL facts for GOOGL (CIK: 0001652044)...
+[2026-09-30T03:40:08.663+0000] {logging_mixin.py:188} INFO - Successfully landed SEC facts payload for GOOGL
+[2026-09-30T03:40:08.665+0000] {logging_mixin.py:188} INFO - Refreshed SEC XBRL disclosure for GOOGL
+[2026-09-30T03:40:08.665+0000] {python.py:237} INFO - Done. Returned value was: None
+[2026-09-30T03:40:08.666+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-09-30T03:40:08.676+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=dag_market_eod, task_id=ingest_sec_GOOGL, run_id=manual__2026-09-30T03:40:01.939932+00:00, execution_date=20260930T034001, start_date=20260930T034008, end_date=20260930T034008
+[2026-09-30T03:40:08.690+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-09-30T03:40:08.703+0000] {taskinstance.py:3503} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2026-09-30T03:40:08.705+0000] {local_task_job_runner.py:222} INFO - ::endgroup::

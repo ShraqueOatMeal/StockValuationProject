@@ -1,0 +1,20 @@
+[2026-09-30T03:40:03.139+0000] {local_task_job_runner.py:120} INFO - ::group::Pre task execution logs
+[2026-09-30T03:40:03.151+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: dag_market_eod.ingest_prices_NOW scheduled__2026-09-28T22:00:00+00:00 [queued]>
+[2026-09-30T03:40:03.155+0000] {taskinstance.py:2076} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: dag_market_eod.ingest_prices_NOW scheduled__2026-09-28T22:00:00+00:00 [queued]>
+[2026-09-30T03:40:03.155+0000] {taskinstance.py:2306} INFO - Starting attempt 1 of 3
+[2026-09-30T03:40:03.161+0000] {taskinstance.py:2330} INFO - Executing <Task(PythonOperator): ingest_prices_NOW> on 2026-09-28 22:00:00+00:00
+[2026-09-30T03:40:03.165+0000] {standard_task_runner.py:64} INFO - Started process 240 to run task
+[2026-09-30T03:40:03.167+0000] {standard_task_runner.py:90} INFO - Running: ['airflow', 'tasks', 'run', 'dag_market_eod', 'ingest_prices_NOW', 'scheduled__2026-09-28T22:00:00+00:00', '--job-id', '10', '--raw', '--subdir', 'DAGS_FOLDER/dag_market_eod.py', '--cfg-path', '/tmp/tmp4xgos53g']
+[2026-09-30T03:40:03.168+0000] {standard_task_runner.py:91} INFO - Job 10: Subtask ingest_prices_NOW
+[2026-09-30T03:40:03.203+0000] {task_command.py:426} INFO - Running <TaskInstance: dag_market_eod.ingest_prices_NOW scheduled__2026-09-28T22:00:00+00:00 [running]> on host ba8db4610040
+[2026-09-30T03:40:03.270+0000] {taskinstance.py:2648} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='afive' AIRFLOW_CTX_DAG_ID='dag_market_eod' AIRFLOW_CTX_TASK_ID='ingest_prices_NOW' AIRFLOW_CTX_EXECUTION_DATE='2026-09-28T22:00:00+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='scheduled__2026-09-28T22:00:00+00:00'
+[2026-09-30T03:40:03.271+0000] {taskinstance.py:430} INFO - ::endgroup::
+[2026-09-30T03:40:03.290+0000] {logging_mixin.py:188} INFO - Fetching market data for: NOW (Period: 5d)
+[2026-09-30T03:40:03.555+0000] {logging_mixin.py:188} INFO - Successfully upserted 5 rows for NOW
+[2026-09-30T03:40:03.555+0000] {logging_mixin.py:188} INFO - Recorded 5 rows for NOW
+[2026-09-30T03:40:03.555+0000] {python.py:237} INFO - Done. Returned value was: None
+[2026-09-30T03:40:03.556+0000] {taskinstance.py:441} INFO - ::group::Post task execution logs
+[2026-09-30T03:40:03.564+0000] {taskinstance.py:1206} INFO - Marking task as SUCCESS. dag_id=dag_market_eod, task_id=ingest_prices_NOW, run_id=scheduled__2026-09-28T22:00:00+00:00, execution_date=20260928T220000, start_date=20260930T034003, end_date=20260930T034003
+[2026-09-30T03:40:03.579+0000] {local_task_job_runner.py:243} INFO - Task exited with return code 0
+[2026-09-30T03:40:03.599+0000] {taskinstance.py:3503} INFO - 1 downstream tasks scheduled from follow-on schedule check
+[2026-09-30T03:40:03.600+0000] {local_task_job_runner.py:222} INFO - ::endgroup::
