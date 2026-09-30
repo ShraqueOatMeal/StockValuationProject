@@ -5858,3 +5858,10 @@ ModuleNotFoundError: No module named 'yfinance'
 [2026-09-30T09:32:20.190+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:32:20.190+0000] {dag.py:3089} INFO - Sync 1 DAGs
 [2026-09-30T09:32:20.201+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:32:20.201+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
 [2026-09-30T09:32:20.213+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.373 seconds
+[2026-09-30T09:32:50.315+0000] {processor.py:161} INFO - Started process (PID=4458) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:32:50.317+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:32:50.318+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:32:50.318+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:32:50.655+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:32:50.669+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:32:50.669+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:32:50.681+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:32:50.681+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:32:50.692+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.381 seconds
