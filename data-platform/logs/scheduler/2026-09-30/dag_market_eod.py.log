@@ -5725,3 +5725,87 @@ ModuleNotFoundError: No module named 'yfinance'
 [2026-09-30T09:22:41.219+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:22:41.219+0000] {dag.py:3089} INFO - Sync 1 DAGs
 [2026-09-30T09:22:41.230+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:22:41.230+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
 [2026-09-30T09:22:41.241+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.374 seconds
+[2026-09-30T09:23:11.345+0000] {processor.py:161} INFO - Started process (PID=4344) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:11.346+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:23:11.347+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:11.346+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:11.670+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:11.686+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:11.685+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:23:11.697+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:11.697+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:23:11.707+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.366 seconds
+[2026-09-30T09:23:41.805+0000] {processor.py:161} INFO - Started process (PID=4350) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:41.807+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:23:41.808+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:41.808+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:42.139+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:23:42.158+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:42.158+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:23:42.170+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:23:42.170+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:23:42.179+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.378 seconds
+[2026-09-30T09:24:12.282+0000] {processor.py:161} INFO - Started process (PID=4356) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:12.283+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:24:12.284+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:12.284+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:12.615+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:12.633+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:12.632+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:24:12.644+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:12.644+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:24:12.655+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.378 seconds
+[2026-09-30T09:24:42.755+0000] {processor.py:161} INFO - Started process (PID=4362) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:42.756+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:24:42.757+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:42.757+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:43.092+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:24:43.109+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:43.108+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:24:43.120+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:24:43.120+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:24:43.133+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.382 seconds
+[2026-09-30T09:25:13.237+0000] {processor.py:161} INFO - Started process (PID=4368) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:13.238+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:25:13.239+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:13.238+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:13.583+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:13.599+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:13.599+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:25:13.610+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:13.609+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:25:13.618+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.385 seconds
+[2026-09-30T09:25:43.713+0000] {processor.py:161} INFO - Started process (PID=4374) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:43.714+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:25:43.715+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:43.715+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:44.029+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:25:44.044+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:44.043+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:25:44.055+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:25:44.055+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:25:44.066+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.357 seconds
+[2026-09-30T09:26:14.168+0000] {processor.py:161} INFO - Started process (PID=4380) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:14.168+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:26:14.169+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:14.169+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:14.499+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:14.514+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:14.513+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:26:14.525+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:14.525+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:26:14.535+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.371 seconds
+[2026-09-30T09:26:44.644+0000] {processor.py:161} INFO - Started process (PID=4386) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:44.646+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:26:44.647+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:44.646+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:44.969+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:26:44.983+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:44.983+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:26:44.994+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:26:44.994+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:26:45.005+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.364 seconds
+[2026-09-30T09:27:15.105+0000] {processor.py:161} INFO - Started process (PID=4392) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:15.106+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:27:15.107+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:15.107+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:15.445+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:15.461+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:15.460+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:27:15.472+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:15.471+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:27:15.481+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.380 seconds
+[2026-09-30T09:27:45.585+0000] {processor.py:161} INFO - Started process (PID=4398) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:45.587+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:27:45.588+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:45.588+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:45.911+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:27:45.931+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:45.931+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:27:45.943+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:27:45.943+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:27:45.953+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.372 seconds
+[2026-09-30T09:28:16.053+0000] {processor.py:161} INFO - Started process (PID=4404) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:16.053+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:28:16.054+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:16.054+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:16.389+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:16.404+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:16.404+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:28:16.415+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:16.415+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:28:16.425+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.377 seconds
+[2026-09-30T09:28:46.521+0000] {processor.py:161} INFO - Started process (PID=4410) to work on /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:46.523+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/dag_market_eod.py for tasks to queue
+[2026-09-30T09:28:46.524+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:46.524+0000] {dagbag.py:545} INFO - Filling up the DagBag from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:46.860+0000] {processor.py:840} INFO - DAG(s) 'dag_market_eod' retrieved from /opt/airflow/dags/dag_market_eod.py
+[2026-09-30T09:28:46.874+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:46.874+0000] {dag.py:3089} INFO - Sync 1 DAGs
+[2026-09-30T09:28:46.886+0000] {logging_mixin.py:188} INFO - [2026-09-30T09:28:46.886+0000] {dag.py:3947} INFO - Setting next_dagrun for dag_market_eod to 2026-09-29 22:00:00+00:00, run_after=2026-09-30 22:00:00+00:00
+[2026-09-30T09:28:46.897+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/dag_market_eod.py took 0.380 seconds
