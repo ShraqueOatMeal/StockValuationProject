@@ -7,6 +7,7 @@ use App\Models\UserDcfScenario;
 use App\Services\Valuation\DcfCalculator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -110,22 +111,15 @@ class CompanyValuationController
         ]);
 
         // 6. Sector Median Benchmarks
-        $calculateMedian = function (array $values): ?float {
-            $filtered = array_values(array_filter($values, fn ($v) => ! is_null($v) && $v > 0));
-            $count = count($filtered);
-            if ($count === 0) return null;
-            sort($filtered);
-            $mid = (int) floor($count / 2);
-            return $count % 2 === 0
-                ? round(($filtered[$mid - 1] + $filtered[$mid]) / 2, 2)
-                : round($filtered[$mid], 2);
-        };
+        $benchmarks = DB::table('gold.agg_industry_benchmarks')
+            ->where('industry', $company->industry)
+            ->first();
 
         $industryBenchmarks = [
-            'median_pe' => $calculateMedian($peers->pluck('pe')->all()),
-            'median_p_fcf' => $calculateMedian($peers->pluck('p_fcf')->all()),
-            'median_ev_sales' => $calculateMedian($peers->pluck('ev_sales')->all()),
-            'median_ev_ebit' => $calculateMedian($peers->pluck('ev_ebit')->all()),
+            'median_pe' => $benchmarks?->median_pe ? (float) $benchmarks->median_pe : null,
+            'median_p_fcf' => $benchmarks?->median_p_fcf ? (float) $benchmarks->median_p_fcf : null,
+            'median_ev_sales' => $benchmarks?->median_ev_sales ? (float) $benchmarks->median_ev_sales : null,
+            'median_ev_ebit' => $benchmarks?->median_ev_ebit ? (float) $benchmarks->median_ev_ebit : null,
         ];
 
         // 7. Saved Scenarios (defaulted to user_id = 1 for personal analytical workstation)

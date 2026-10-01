@@ -3,28 +3,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 
-// export interface DetailedStatementRecord {
-//     period: string;
-//     period_end_date: string;
-//     revenue: number;
-//     revenue_yoy: number | null;
-//     gross_profit: number;
-//     gross_margin: number;
-//     operating_income: number;
-//     operating_margin: number;
-//     net_income: number;
-//     net_margin: number;
-//     cash_and_equivalents: number;
-//     total_assets: number;
-//     total_liabilities: number;
-//     stockholders_equity: number;
-//     debt_to_equity: number;
-//     operating_cash_flow: number;
-//     capital_expenditures: number;
-//     free_cash_flow: number;
-//     fcf_conversion: number | null;
-// }
-
 interface Props {
     statements: DetailedStatementRecord[];
     currency: string;
