@@ -13,8 +13,8 @@ export function FinancialStatementsTable({ statements, currency }: Props) {
     const scale = viewMode === 'billions' ? 1e9 : 1e6;
     const unitLabel = viewMode === 'billions' ? '($B)' : '($M)';
 
-    // Chronological order right-aligned (most recent on the right)
-    const periods = statements.slice(-8);
+    // Chronological order left-aligned (most recent on the left) just extract 10
+    const periods = statements.slice(0, 10);
 
     const fmt = (val: number) => {
         return (val / scale).toLocaleString('en-US', {
