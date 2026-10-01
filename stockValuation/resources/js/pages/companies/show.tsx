@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Bookmark, Check, Save } from 'lucide-react';
+import { FinancialStatementsTable } from '@/components/valuation/financial-statements-table'
 import {
     ResponsiveContainer,
     ComposedChart,
@@ -501,7 +502,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                 {/* Interactive DCF Engine */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
                     {/* Assumptions Controls */}
-                    <Card className="lg:col-span-2">
+                    <Card className="lg:col-span-3">
                         <CardHeader>
                             <CardTitle>Discounted Cash Flow Assumptions</CardTitle>
                             <CardDescription>
@@ -649,7 +650,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                             </div>
                         </CardContent>
                     </Card>
-                    <Card>
+                    <Card className="lg:col-span-2">
                         <CardHeader>
                             <CardTitle>Valuation Sensitivity Matrix</CardTitle>
                             <CardDescription>
@@ -734,7 +735,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                         </CardContent>
                     </Card>
                     {/* Industry Peer Valuation Comps */}
-                    <Card>
+                    <Card className="lg:col-span-3">
                         <CardHeader>
                             <div className="flex flex-col justify-between gap-1 sm:flex-row sm:items-center">
                                 <div>
@@ -833,6 +834,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                         </CardContent>
                     </Card>
                 </div>
+                <FinancialStatementsTable statements={historical} currency={company.currency} />
             </div>
         </AppLayout>
     );

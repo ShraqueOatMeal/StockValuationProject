@@ -1,12 +1,5 @@
-
-  
-    
-
   create  table "afive_dw"."gold"."fact_daily_market_valuation__dbt_tmp"
-  
-  
     as
-  
   (
     with prices as (
     select * from "afive_dw"."silver"."silver_market_prices"
