@@ -1,4 +1,14 @@
-with sec_entities as (
+
+  
+    
+
+  create  table "afive_dw"."gold"."dim_company__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with sec_entities as (
     select
         f.ticker,
         f.cik,
@@ -7,15 +17,15 @@ with sec_entities as (
         -- the companyfacts payload carries just cik, entityName and facts.
         s.payload->>'sic' as sic_code,
         nullif(s.payload->>'sicDescription', '') as industry_description
-    from {{ source('bronze', 'raw_sec_filings') }} f
-    left join {{ source('bronze', 'raw_sec_filings') }} s
+    from "afive_dw"."bronze"."raw_sec_filings" f
+    left join "afive_dw"."bronze"."raw_sec_filings" s
         on f.cik = s.cik
         and s.form_type = 'ENTITY'
     where f.form_type = 'FACTS'
 ),
 
 market_tickers as (
-    select distinct ticker from {{ ref('stg_market_prices') }}
+    select distinct ticker from "afive_dw"."bronze"."stg_market_prices"
 ),
 
 combined as (
@@ -48,3 +58,5 @@ select
     true as is_active,
     current_timestamp as created_at
 from combined
+  );
+  

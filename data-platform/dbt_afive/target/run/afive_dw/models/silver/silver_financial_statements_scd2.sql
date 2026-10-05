@@ -1,5 +1,15 @@
-with staged_facts as (
-    select * from {{ ref('stg_sec_facts') }}
+
+  
+    
+
+  create  table "afive_dw"."silver"."silver_financial_statements_scd2__dbt_tmp"
+  
+  
+    as
+  
+  (
+    with staged_facts as (
+    select * from "afive_dw"."bronze"."stg_sec_facts"
 ),
 
 ordered_facts as (
@@ -52,3 +62,5 @@ scd2 as (
 )
 
 select * from scd2
+  );
+  

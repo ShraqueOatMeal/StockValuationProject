@@ -69,17 +69,18 @@ class CompanyValuationController
         ];
 
         // 4. Historical Statements: Line items and margins already computed in fact_quarterly_financials
+        // (margins are stored as ratios, e.g. 0.6165, and converted to percentages for display)
         $historical = $financials->map(fn ($f) => [
             'period' => $f->fiscal_year . ' ' . $f->fiscal_period,
             'period_end_date' => $f->period_end_date ? $f->period_end_date->format('M d, Y') : '—',
             'revenue' => (float) ($f->total_revenue ?? 0),
             'revenue_yoy' => $f->revenue_yoy_growth !== null ? (float) $f->revenue_yoy_growth : null,
             'gross_profit' => (float) ($f->gross_profit ?? 0),
-            'gross_margin' => (float) ($f->gross_margin ?? 0),
+            'gross_margin' => round((float) ($f->gross_margin ?? 0) * 100, 2),
             'operating_income' => (float) ($f->operating_income ?? 0),
-            'operating_margin' => (float) ($f->operating_margin ?? 0),
+            'operating_margin' => round((float) ($f->operating_margin ?? 0) * 100, 2),
             'net_income' => (float) ($f->net_income ?? 0),
-            'net_margin' => (float) ($f->net_margin ?? 0),
+            'net_margin' => round((float) ($f->net_margin ?? 0) * 100, 2),
             'cash_and_equivalents' => (float) ($f->cash_and_cash_equivalents ?? 0),
             'total_assets' => (float) ($f->total_assets ?? 0),
             'total_liabilities' => (float) ($f->total_liabilities ?? 0),
@@ -88,7 +89,7 @@ class CompanyValuationController
             'operating_cash_flow' => (float) ($f->operating_cash_flow ?? 0),
             'capital_expenditures' => (float) ($f->capital_expenditures ?? 0),
             'free_cash_flow' => (float) ($f->free_cash_flow ?? 0),
-            'fcf_conversion' => $f->fcf_conversion !== null ? (float) $f->fcf_conversion : null,
+            'fcf_conversion' => $f->fcf_conversion !== null ? round((float) $f->fcf_conversion * 100, 2) : null,
         ]);
 
         // 5. Peer Group: Multiples read directly from peer records in fact_daily_market_valuation

@@ -1,5 +1,5 @@
 with raw_data as (
-    select * from {{ source('bronze', 'raw_market_prices') }}
+    select * from "afive_dw"."bronze"."raw_market_prices"
 ),
 
 cleaned as (

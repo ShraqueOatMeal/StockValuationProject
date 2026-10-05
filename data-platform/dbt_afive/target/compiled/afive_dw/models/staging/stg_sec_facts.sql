@@ -3,7 +3,7 @@ with raw_filings as (
         ticker,
         cik,
         payload
-    from {{ source('bronze', 'raw_sec_filings') }}
+    from "afive_dw"."bronze"."raw_sec_filings"
     where form_type = 'FACTS'
 ),
 

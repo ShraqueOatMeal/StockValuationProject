@@ -19,12 +19,15 @@ class QuarterlyFinancial extends Model
         'total_revenue' => 'decimal:2',
         'operating_income' => 'decimal:2',
         'net_income' => 'decimal:2',
+        'gross_profit' => 'decimal:2',
         'free_cash_flow' => 'decimal:2',
+        'gross_margin' => 'float',
         'operating_margin' => 'float',
         'net_margin' => 'float',
         'return_on_equity' => 'float',
         'debt_to_equity' => 'float',
         'current_ratio' => 'float',
+        'fcf_conversion' => 'float',
         'computed_at' => 'datetime',
     ];
 

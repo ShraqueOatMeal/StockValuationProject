@@ -1,5 +1,5 @@
 with staged_facts as (
-    select * from {{ ref('stg_sec_facts') }}
+    select * from "afive_dw"."bronze"."stg_sec_facts"
 ),
 
 ordered_facts as (
