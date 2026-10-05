@@ -43,6 +43,10 @@ tag_map (gaap_tag, metric, tag_priority) as (
         ('AssetsCurrent', 'current_assets', 1),
         ('Liabilities', 'total_liabilities', 1),
         ('LiabilitiesCurrent', 'current_liabilities', 1),
+        ('LongTermDebt', 'long_term_debt', 1),
+        ('LongTermDebtNoncurrent', 'long_term_debt_noncurrent', 1),
+        ('LongTermDebtCurrent', 'long_term_debt_current', 1),
+        ('ShortTermBorrowings', 'short_term_borrowings', 1),
         ('StockholdersEquity', 'stockholders_equity', 1),
         ('CashAndCashEquivalentsAtCarryingValue', 'cash_and_cash_equivalents', 1),
         ('PropertyPlantAndEquipmentNet', 'ppe_net', 1),
@@ -182,6 +186,13 @@ instants_pivoted as (
         max(amount) filter (where metric = 'current_assets') as current_assets,
         max(amount) filter (where metric = 'total_liabilities') as total_liabilities,
         max(amount) filter (where metric = 'current_liabilities') as current_liabilities,
+        -- Interest-bearing debt: non-current + current long-term debt where split out,
+        -- otherwise the combined long-term debt tag, plus short-term borrowings
+        coalesce(
+            max(amount) filter (where metric = 'long_term_debt_noncurrent')
+                + coalesce(max(amount) filter (where metric = 'long_term_debt_current'), 0),
+            max(amount) filter (where metric = 'long_term_debt')
+        ) + coalesce(max(amount) filter (where metric = 'short_term_borrowings'), 0) as total_debt,
         max(amount) filter (where metric = 'stockholders_equity') as stockholders_equity,
         max(amount) filter (where metric = 'cash_and_cash_equivalents') as cash_and_cash_equivalents,
         max(amount) filter (where metric = 'ppe_net') as property_plant_equipment_net,
@@ -213,7 +224,12 @@ yf_quarterly as (
         period_end_date,
         max(amount) filter (where line_item = 'Total Revenue') as total_revenue,
         max(amount) filter (where line_item = 'Gross Profit') as gross_profit,
-        max(amount) filter (where line_item = 'Operating Income') as operating_income,
+        -- Banks and insurers report no operating income line; pre-tax profit is their
+        -- equivalent, since interest is part of operations
+        coalesce(
+            max(amount) filter (where line_item = 'Operating Income'),
+            max(amount) filter (where line_item = 'Pretax Income')
+        ) as operating_income,
         max(amount) filter (where line_item = 'Net Income') as net_income,
         max(amount) filter (where line_item = 'Tax Provision') as income_tax_expense,
         -- Reported on the cash flow statement as an adjustment, so a gain is negative
@@ -222,6 +238,7 @@ yf_quarterly as (
         max(amount) filter (where line_item = 'Current Assets') as current_assets,
         max(amount) filter (where line_item = 'Total Liabilities Net Minority Interest') as total_liabilities,
         max(amount) filter (where line_item = 'Current Liabilities') as current_liabilities,
+        max(amount) filter (where line_item = 'Total Debt') as total_debt,
         max(amount) filter (where line_item = 'Stockholders Equity') as stockholders_equity,
         max(amount) filter (where line_item = 'Cash And Cash Equivalents') as cash_and_cash_equivalents,
         max(amount) filter (where line_item = 'Operating Cash Flow') as operating_cash_flow,
@@ -325,6 +342,9 @@ quarter_inputs as (
         coalesce(i.current_assets, y.current_assets) as current_assets,
         coalesce(i.total_liabilities, y.total_liabilities) as total_liabilities,
         coalesce(i.current_liabilities, y.current_liabilities) as current_liabilities,
+        -- Yahoo Finance first here: its total includes lease obligations and is tagged
+        -- consistently, whereas XBRL debt tags vary from filer to filer
+        coalesce(y.total_debt, i.total_debt) as total_debt,
         coalesce(i.stockholders_equity, y.stockholders_equity) as stockholders_equity,
         coalesce(i.cash_and_cash_equivalents, y.cash_and_cash_equivalents) as cash_and_cash_equivalents,
         coalesce(f.operating_cash_flow, y.operating_cash_flow) as operating_cash_flow,
@@ -499,6 +519,7 @@ ratios as (
     current_assets,
     total_liabilities,
     current_liabilities,
+    total_debt,
     stockholders_equity,
     cash_and_cash_equivalents,
     operating_cash_flow,

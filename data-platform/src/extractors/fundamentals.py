@@ -22,10 +22,16 @@ def _statement_to_payload(df: pd.DataFrame, existing: dict) -> dict:
             payload[period_end.strftime("%Y-%m-%d")] = values
     return payload
 
+# Company profile fields kept from Yahoo Finance's quote summary
+PROFILE_FIELDS = (
+    'longName', 'shortName', 'sector', 'industry', 'country',
+    'currency', 'financialCurrency', 'exchange', 'fullExchangeName',
+)
+
 def fetch_and_store_fundamentals(ticker: str) -> int:
     """
-    Pulls quarterly and annual income statement, balance sheet and cash flow data
-    from Yahoo Finance and upserts into bronze.raw_yf_fundamentals.
+    Pulls quarterly and annual income statement, balance sheet and cash flow data,
+    plus the company profile, from Yahoo Finance and upserts into bronze.raw_yf_fundamentals.
     """
     print(f"Fetching fundamentals for: {ticker}")
     stock = yf.Ticker(ticker)
@@ -67,6 +73,13 @@ def fetch_and_store_fundamentals(ticker: str) -> int:
                     continue
 
                 cursor.execute(insert_sql, (ticker.upper(), statement_type, frequency, json.dumps(payload)))
+                stored += 1
+
+            # Company profile (name, sector, industry, currency): stored as a flat object
+            info = stock.info or {}
+            profile = {field: info[field] for field in PROFILE_FIELDS if info.get(field) is not None}
+            if profile:
+                cursor.execute(insert_sql, (ticker.upper(), 'profile', 'latest', json.dumps(profile)))
                 stored += 1
         conn.commit()
     finally:

@@ -59,6 +59,7 @@ joined as (
         f.debt_to_equity,
         f.cash_and_cash_equivalents,
         f.total_liabilities,
+        f.total_debt,
         f.revenue_yoy_growth,
 
         -- TTM Metrics
@@ -74,10 +75,11 @@ joined as (
         f.ttm_fcf,
         f.ttm_true_owner_earnings,
 
-        -- Enterprise Value (Market Cap + Debt - Cash)
+        -- Enterprise Value (Market Cap + Debt - Cash); total liabilities stand in for
+        -- debt only when no debt figure is available
         round(
           (p.close_price * coalesce(f.shares_outstanding, 1e9))
-          + coalesce(f.total_liabilities, 0)
+          + coalesce(f.total_debt, f.total_liabilities, 0)
           - coalesce(f.cash_and_cash_equivalents, 0),
           2
         ) as enterprise_value,
@@ -87,12 +89,12 @@ joined as (
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_normalized_net_income, 0), 2) as normalized_pe_ratio,
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_fcf, 0), 2) as p_fcf_ratio,
         round(
-            ((p.close_price * coalesce(f.shares_outstanding, 1e9)) + coalesce(f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)) 
+            ((p.close_price * coalesce(f.shares_outstanding, 1e9)) + coalesce(f.total_debt, f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)) 
             / nullif(f.ttm_revenue, 0),
             2
         ) as ev_sales_ratio,
         round(
-            ((p.close_price * coalesce(f.shares_outstanding, 1e9)) + coalesce(f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)) 
+            ((p.close_price * coalesce(f.shares_outstanding, 1e9)) + coalesce(f.total_debt, f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)) 
             / nullif(f.ttm_operating_income, 0), 
             2
         ) as ev_ebit_ratio,
@@ -109,7 +111,7 @@ joined as (
             when f.ttm_true_owner_earnings > 0 and f.shares_outstanding > 0
             then round(
                 (f.ttm_true_owner_earnings * d.dcf_multiple
-                    - (coalesce(f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)))
+                    - (coalesce(f.total_debt, f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)))
                 / f.shares_outstanding,
                 2
             )

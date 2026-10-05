@@ -44,7 +44,7 @@ stockValuation/
 | staging | `stg_market_prices`, `stg_sec_facts`, `stg_yf_fundamentals` | Typed views over bronze; `stg_sec_facts` unnests the selected XBRL tags into one row per reported fact, `stg_yf_fundamentals` one row per line item and period |
 | silver | `silver_market_prices` | Prices with daily return, dollar volume and 20/50-day moving averages |
 | silver | `silver_financial_statements_scd2` | Every filed version of each fact, with `valid_from` / `valid_to` / `is_current` so restatements are tracked |
-| gold | `dim_company` | Ticker, name, currency, exchange and industry |
+| gold | `dim_company` | Ticker, name, currency, exchange and industry (SEC entity data, then the Yahoo Finance profile) |
 | gold | `fact_quarterly_financials` | One row per company and quarter: income statement, balance sheet and cash flow items, margins, TTM sums and YoY growth |
 | gold | `fact_daily_market_valuation` | Daily price joined to the latest financials filed on or before that date: market cap, enterprise value, P/E, P/FCF, EV/Sales, EV/EBIT, base-case fair value and margin of safety |
 | gold | `agg_industry_benchmarks` | Median multiples per industry |
@@ -176,8 +176,8 @@ npm run types:check     # TypeScript
 ## Known limitations
 
 - Historical share counts are not adjusted for stock splits, so `shares_outstanding` jumps around a split date. The latest quarters, which drive the current valuation, are unaffected.
-- `total_liabilities` stands in for debt in the enterprise value and DCF calculations.
-- The DCF subtracts total liabilities, so it produces no fair value for banks such as 1155.KL, whose liabilities are mostly customer deposits.
+- Net debt uses `total_debt` (Yahoo Finance, then XBRL debt tags). Older quarters with neither fall back to total liabilities.
+- Banks such as 1155.KL report no gross profit, current assets, current liabilities or operating income. The first three stay empty; pre-tax profit stands in for operating income. An owner earnings DCF is also a rough fit for a bank, so treat its fair value with caution.
 - Yahoo Finance serves only the latest five quarters and four fiscal years. The extractor keeps periods it has already stored, so history accumulates from the first run onward.
 - `docker/postgres/init_schemas.sql` only runs when the database volume is first created. On an existing database, run the `raw_yf_fundamentals` statement from that file by hand.
 - `agg_industry_benchmarks` only includes tickers that traded on the most recent date in the price table.

@@ -10,6 +10,8 @@
         frequency,
         payload
     from "afive_dw"."bronze"."raw_yf_fundamentals"
+    -- The company profile row is a flat object, read directly by dim_company
+    where statement_type <> 'profile'
 ),
 
 -- Payload shape: { "<period end date>": { "<line item>": value, ... }, ... }

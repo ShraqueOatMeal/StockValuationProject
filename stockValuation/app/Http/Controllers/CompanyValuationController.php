@@ -34,7 +34,7 @@ class CompanyValuationController
         $sharesOutstanding = (float) ($latestVal?->shares_outstanding ?? 1e9);
         $baseOwnerEarnings = (float) ($latestVal?->ttm_true_owner_earnings ?? $latestFinancial?->true_owner_earnings ?? 5e9);
         $cash = (float) ($latestVal?->cash_and_cash_equivalents ?? 0);
-        $debt = (float) ($latestVal?->total_liabilities ?? 0);
+        $debt = (float) ($latestVal?->total_debt ?? $latestVal?->total_liabilities ?? 0);
 
         $dcfDefaults = [
             'base_owner_earnings' => $baseOwnerEarnings > 0 ? $baseOwnerEarnings : 5e9,

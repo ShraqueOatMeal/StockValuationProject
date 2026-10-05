@@ -52,9 +52,9 @@ CREATE TABLE IF NOT EXISTS bronze.raw_macro_yields (
 CREATE TABLE IF NOT EXISTS bronze.raw_yf_fundamentals (
     id BIGSERIAL PRIMARY KEY,
     ticker VARCHAR(20) NOT NULL,
-    statement_type VARCHAR(10) NOT NULL, -- 'income', 'balance', 'cashflow'
-    frequency VARCHAR(10) NOT NULL,      -- 'quarterly', 'annual'
-    payload JSONB NOT NULL,              -- { "<period end date>": { "<line item>": value, ... }, ... }
+    statement_type VARCHAR(10) NOT NULL, -- 'income', 'balance', 'cashflow', 'profile'
+    frequency VARCHAR(10) NOT NULL,      -- 'quarterly', 'annual' ('latest' for the profile)
+    payload JSONB NOT NULL,              -- { "<period end date>": { "<line item>": value, ... }, ... }; the profile is a flat object
     ingested_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_yf_fundamentals UNIQUE (ticker, statement_type, frequency)
 );
