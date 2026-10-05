@@ -26,6 +26,31 @@ dcf_assumptions as (
     ) a
 ),
 
+-- Franchise model: two growth stages of five years each before the terminal value.
+--   q1 = (1+g1)/(1+r), q2 = (1+g2)/(1+r)
+--   sum(q1^t, t=1..5) + q1^5 * sum(q2^t, t=1..5) + q1^5 * q2^5 * (1+g_term) / (r - g_term)
+franchise_assumptions as (
+    select
+        a.*,
+        (select sum(power(a.q1, t)) from generate_series(1, 5) as t)
+        + power(a.q1, 5) * (select sum(power(a.q2, t)) from generate_series(1, 5) as t)
+        + power(a.q1, 5) * power(a.q2, 5)
+            * (1 + a.terminal_growth) / (a.discount_rate - a.terminal_growth) as dcf_multiple
+    from (
+        select
+            v.*,
+            (1 + v.growth_stage_1) / (1 + v.discount_rate) as q1,
+            (1 + v.growth_stage_2) / (1 + v.discount_rate) as q2
+        from (
+            select
+                {{ var('dcf_franchise_growth_stage_1') }}::numeric as growth_stage_1,
+                {{ var('dcf_franchise_growth_stage_2') }}::numeric as growth_stage_2,
+                {{ var('dcf_franchise_terminal_growth') }}::numeric as terminal_growth,
+                {{ var('dcf_franchise_discount_rate') }}::numeric as discount_rate
+        ) v
+    ) a
+),
+
 joined as (
     select
         -- Daily Surrogate Key
@@ -60,6 +85,8 @@ joined as (
         f.cash_and_cash_equivalents,
         f.total_liabilities,
         f.total_debt,
+        f.cash_and_short_term_investments,
+        f.non_operating_investments,
         f.revenue_yoy_growth,
 
         -- TTM Metrics
@@ -74,6 +101,12 @@ joined as (
         round(f.ttm_normalized_net_income / nullif(f.diluted_shares, 0), 2) as normalized_eps_ttm,
         f.ttm_fcf,
         f.ttm_true_owner_earnings,
+        f.ttm_cash_owner_earnings,
+        f.ttm_capital_expenditures,
+        f.ttm_maintenance_capex,
+        f.maintenance_capex_share,
+        f.ttm_greenwald_maintenance_capex,
+        f.greenwald_maintenance_capex_share,
 
         -- Enterprise Value (Market Cap + Debt - Cash); total liabilities stand in for
         -- debt only when no debt figure is available
@@ -102,26 +135,44 @@ joined as (
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_true_owner_earnings, 0), 2) as p_owner_earnings_ratio,
 
         -- Fair Value: 5-year DCF of TTM True Owner Earnings plus a Gordon Growth terminal
-        -- value, less net debt. NULL when owner earnings are not positive or the real
-        -- share count is unknown.
+        -- value. Owner earnings start from net income, which is already after interest,
+        -- so the result is equity value: debt is not subtracted and cash is not added
+        -- (interest paid and earned are both in the earnings). Long-term investments are
+        -- added because their gains were stripped out of normalized earnings. NULL when
+        -- owner earnings are not positive or the real share count is unknown.
         d.growth_stage_1 as dcf_growth_stage_1,
         d.terminal_growth as dcf_terminal_growth,
         d.discount_rate as dcf_discount_rate,
         case
             when f.ttm_true_owner_earnings > 0 and f.shares_outstanding > 0
             then round(
-                (f.ttm_true_owner_earnings * d.dcf_multiple
-                    - (coalesce(f.total_debt, f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)))
+                (f.ttm_true_owner_earnings * d.dcf_multiple + coalesce(f.non_operating_investments, 0))
                 / f.shares_outstanding,
                 2
             )
         end as dcf_equity_value_per_share,
+
+        -- Franchise Fair Value: 10-year, two-stage DCF of TTM Cash Owner Earnings. Operating
+        -- cash flow is also after interest, so the same equity-value treatment applies.
+        fr.growth_stage_1 as franchise_growth_stage_1,
+        fr.growth_stage_2 as franchise_growth_stage_2,
+        fr.terminal_growth as franchise_terminal_growth,
+        fr.discount_rate as franchise_discount_rate,
+        case
+            when f.ttm_cash_owner_earnings > 0 and f.shares_outstanding > 0
+            then round(
+                (f.ttm_cash_owner_earnings * fr.dcf_multiple + coalesce(f.non_operating_investments, 0))
+                / f.shares_outstanding,
+                2
+            )
+        end as franchise_equity_value_per_share,
 
         -- Price-to-Performance indicators (Relative Yield)
         round(p.dividend_amount / nullif(p.adj_close, 0), 6) as daily_dividend_yield,
         current_timestamp as calculated_at
     from prices p
     cross join dcf_assumptions d
+    cross join franchise_assumptions fr
     left join lateral (
         select *
         from financials f
@@ -134,12 +185,15 @@ joined as (
 
 select
     j.*,
-    -- A model value at or below zero means net debt exceeds the value of the cash flows
-    -- (typical for banks, whose liabilities are deposits), so no fair value is reported
     case when dcf_equity_value_per_share > 0 then dcf_equity_value_per_share end as fair_value_per_share,
     -- Margin of Safety: discount of the market price to fair value
     case
         when dcf_equity_value_per_share > 0
         then round((dcf_equity_value_per_share - close_price) / dcf_equity_value_per_share, 4)
-    end as margin_of_safety
+    end as margin_of_safety,
+    case when franchise_equity_value_per_share > 0 then franchise_equity_value_per_share end as franchise_fair_value_per_share,
+    case
+        when franchise_equity_value_per_share > 0
+        then round((franchise_equity_value_per_share - close_price) / franchise_equity_value_per_share, 4)
+    end as franchise_margin_of_safety
 from joined j

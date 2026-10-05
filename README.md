@@ -61,15 +61,17 @@ Notes on `fact_quarterly_financials`:
 
 ### Fair value
 
-`fact_daily_market_valuation.fair_value_per_share` is a five-year DCF of trailing-twelve-month True Owner Earnings with a Gordon Growth terminal value, less net debt, divided by shares outstanding. The base-case assumptions are dbt vars in `dbt_afive/dbt_project.yml`:
+`fact_daily_market_valuation` carries two DCF fair values, shown as two tabs on the company page. Both use a Gordon Growth terminal value. Their base cash flows are after interest, so the discounted value is equity value: debt is not subtracted and cash is not added, since interest paid and earned are already in the cash flows. Long-term investments (`non_operating_investments`) are added because their gains are excluded from the base.
 
-| Var | Default | Meaning |
+| | Conservative | Franchise |
 | --- | --- | --- |
-| `dcf_growth_stage_1` | 0.10 | Annual owner earnings growth, years 1–5 |
-| `dcf_terminal_growth` | 0.025 | Perpetual growth after year 5 |
-| `dcf_discount_rate` | 0.085 | Required return / WACC |
+| Columns | `fair_value_per_share`, `margin_of_safety` | `franchise_fair_value_per_share`, `franchise_margin_of_safety` |
+| Base cash flow (TTM) | True Owner Earnings: normalized net income + D&A − maintenance CapEx | Cash Owner Earnings: operating cash flow − maintenance CapEx |
+| Growth | 10% for years 1–5 | 15% for years 1–5, 10% for years 6–10 |
+| Terminal growth / discount rate | 2.5% / 8.5% | 2.5% / 8.5% |
+| Added to the discounted value | Long-term investments | Long-term investments |
 
-The company page starts from these values and recalculates the same model in the browser as the sliders move; that what-if calculation cannot live in dbt because it depends on user input.
+The assumptions are dbt vars in `dbt_afive/dbt_project.yml` (`dcf_*` and `dcf_franchise_*`). The company page starts from these values and recalculates the selected model in the browser as the sliders move; that what-if calculation cannot live in dbt because it depends on user input.
 
 ## Getting started
 
@@ -176,7 +178,9 @@ npm run types:check     # TypeScript
 ## Known limitations
 
 - Historical share counts are not adjusted for stock splits, so `shares_outstanding` jumps around a split date. The latest quarters, which drive the current valuation, are unaffected.
-- Net debt uses `total_debt` (Yahoo Finance, then XBRL debt tags). Older quarters with neither fall back to total liabilities.
+- Enterprise value and the EV multiples use `total_debt` (Yahoo Finance, then XBRL debt tags). Older quarters with neither fall back to total liabilities.
+- Maintenance CapEx is never reported, so it is estimated. The gold tables carry two estimates as a share of trailing CapEx: `maintenance_capex_share` (D&A proxy, the default) and `greenwald_maintenance_capex_share` (CapEx less the plant needed for the year's sales growth). The company page shows both as markers on a slider.
+- Both DCF models default to maintenance CapEx roughly equal to D&A. If more of a company's CapEx is really needed to sustain its earnings, its owner earnings and fair value are overstated.
 - Banks such as 1155.KL report no gross profit, current assets, current liabilities or operating income. The first three stay empty; pre-tax profit stands in for operating income. An owner earnings DCF is also a rough fit for a bank, so treat its fair value with caution.
 - Yahoo Finance serves only the latest five quarters and four fiscal years. The extractor keeps periods it has already stored, so history accumulates from the first run onward.
 - `docker/postgres/init_schemas.sql` only runs when the database volume is first created. On an existing database, run the `raw_yf_fundamentals` statement from that file by hand.

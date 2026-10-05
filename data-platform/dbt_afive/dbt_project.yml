@@ -8,11 +8,18 @@ model-paths: ["models"]
 test-paths: ["tests"]
 macro-paths: ["macros"]
 
-# Base-case assumptions for the owner earnings DCF in fact_daily_market_valuation
+# Base-case assumptions for the two DCF models in fact_daily_market_valuation
 vars:
+  # Conservative: 5 years of growth on True Owner Earnings
   dcf_growth_stage_1: 0.10     # annual owner earnings growth, years 1-5
   dcf_terminal_growth: 0.025   # perpetual growth after year 5
   dcf_discount_rate: 0.085     # required return / WACC
+
+  # Franchise: 10 years of growth in two stages on Cash Owner Earnings
+  dcf_franchise_growth_stage_1: 0.15   # annual growth, years 1-5
+  dcf_franchise_growth_stage_2: 0.10   # annual growth, years 6-10
+  dcf_franchise_terminal_growth: 0.025 # perpetual growth after year 10
+  dcf_franchise_discount_rate: 0.085   # required return / WACC
 
 clean-targets:
   - "target"

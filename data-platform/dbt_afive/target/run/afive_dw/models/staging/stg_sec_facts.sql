@@ -46,6 +46,12 @@ target_tags as (
         ('us-gaap', 'ShortTermBorrowings', 'USD'),
         ('us-gaap', 'StockholdersEquity', 'USD'),
         ('us-gaap', 'CashAndCashEquivalentsAtCarryingValue', 'USD'),
+        ('us-gaap', 'CashCashEquivalentsAndShortTermInvestments', 'USD'),
+        ('us-gaap', 'MarketableSecuritiesCurrent', 'USD'),
+        ('us-gaap', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent', 'USD'),
+        ('us-gaap', 'AvailableForSaleSecuritiesCurrent', 'USD'),
+        ('us-gaap', 'ShortTermInvestments', 'USD'),
+        ('us-gaap', 'OtherLongTermInvestments', 'USD'),
         ('us-gaap', 'PropertyPlantAndEquipmentNet', 'USD'),
         ('us-gaap', 'PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization', 'USD'),
         -- Cash Flow Statement

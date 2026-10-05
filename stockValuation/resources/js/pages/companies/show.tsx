@@ -8,6 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Bookmark, Check, Save } from 'lucide-react';
 import { FinancialStatementsTable } from '@/components/valuation/financial-statements-table'
 import {
@@ -35,16 +36,36 @@ interface StatementRecord {
     roe: number;
 }
 
-interface DcfDefaults {
+type DcfModelKey = 'conservative' | 'franchise';
+
+interface DcfModel {
     base_owner_earnings: number;
+    // Base figure with maintenance CapEx added back; null when the what-if is unavailable
+    base_before_maintenance_capex: number | null;
     growth_stage_1: number;
+    growth_stage_2: number;
+    stage_2_years: number;
     terminal_growth: number;
     wacc: number;
-    cash: number;
-    total_debt: number;
+    non_operating_investments: number;
     shares_outstanding: number;
-    current_price: number;
+    fair_value_per_share: number | null;
 }
+
+const DCF_MODEL_COPY: Record<DcfModelKey, { label: string; baseLabel: string; description: string }> = {
+    conservative: {
+        label: 'Conservative',
+        baseLabel: 'Base True Owner Earnings, TTM ($B)',
+        description:
+            'Stress-test case. Discounts True Owner Earnings (normalized net income plus depreciation & amortization, less maintenance CapEx) over 5 years of growth. Assumes maintenance CapEx is roughly equal to D&A.',
+    },
+    franchise: {
+        label: 'Franchise',
+        baseLabel: 'Base Cash Owner Earnings, TTM ($B)',
+        description:
+            'Compounder case. Discounts Cash Owner Earnings (operating cash flow less maintenance CapEx) over 10 years of growth in two stages. Assumes maintenance CapEx is roughly equal to D&A.',
+    },
+};
 
 interface MultiplesData {
     market_cap: number;
@@ -97,7 +118,8 @@ interface Props {
         sma_50: number | string | null;
     };
     historical: StatementRecord[];
-    dcf_defaults: DcfDefaults;
+    dcf_models: Record<DcfModelKey, DcfModel>;
+    maintenance_capex: { ttm_capex: number | null; default_share: number | null; greenwald_share: number | null };
     saved_scenarios: SavedScenario[];
     multiples: MultiplesData;
     peers?:PeerData[];
@@ -111,14 +133,47 @@ interface SensitivityPoint{
     marginOfSafety: number;
 }
 
+interface DcfInputs {
+    base: number;
+    growthStage1: number;
+    growthStage2: number;
+    stage2Years: number;
+    terminalGrowth: number;
+    discountRate: number;
+    investments: number;
+    shares: number;
+}
+
+// Shared by the live valuation and the sensitivity matrix: 5 years at the stage-1 growth
+// rate, optionally followed by a second stage, then a Gordon Growth terminal value.
+// The cash flows are after interest, so their present value is equity value; long-term
+// investments excluded from those cash flows are added on top.
+function runDcf({ base, growthStage1, growthStage2, stage2Years, terminalGrowth, discountRate, investments, shares }: DcfInputs) {
+    const years = 5 + stage2Years;
+    let pvExplicit = 0;
+    let running = base;
+    const projections = [];
+
+    for (let year = 1; year <= years; year++) {
+        running *= 1 + (year <= 5 ? growthStage1 : growthStage2);
+        const pv = running / Math.pow(1 + discountRate, year);
+        pvExplicit += pv;
+        projections.push({ year: `Year ${year}`, fcf: running / 1e9, pv_fcf: pv / 1e9 });
+    }
+
+    const terminalValue = (running * (1 + terminalGrowth)) / (discountRate - terminalGrowth);
+    const pvTerminalValue = terminalValue / Math.pow(1 + discountRate, years);
+    const earningsValue = pvExplicit + pvTerminalValue;
+    const equityValue = earningsValue + investments;
+    const fairValue = shares > 0 ? equityValue / shares : 0;
+
+    return { pvExplicit, terminalValue, pvTerminalValue, earningsValue, equityValue, fairValue, projections };
+}
+
 function generateSensitivityMatrix(
-    baseFcf: number,
-    growthStage1: number,
+    inputs: Omit<DcfInputs, 'terminalGrowth' | 'discountRate'>,
     baseWacc: number,
     baseTerminalGrowth: number,
-    cash: number,
-    debt: number,
-    shares: number,
     currentPrice: number
 ): { waccSteps: number[]; growthSteps: number[]; matrix: SensitivityPoint[][] } {
     // 5 WACC steps centered around current WACC (-2%, -1%, 0, +1%, +2%)
@@ -130,8 +185,6 @@ function generateSensitivityMatrix(
     const growthSteps = [-1.0, -0.5, 0, 0.5, 1.0].map((delta) =>
         Math.max(0.5, Number((baseTerminalGrowth + delta).toFixed(2)))
     );
-
-    const netDebt = debt - cash;
 
     const matrix = waccSteps.map((waccPct) => {
         const r = waccPct / 100;
@@ -149,20 +202,7 @@ function generateSensitivityMatrix(
                 };
             }
 
-            let pvExplicit = 0;
-            let runningFcf = baseFcf;
-
-            for (let year = 1; year <= 5; year++) {
-                runningFcf *= 1 + growthStage1;
-                pvExplicit += runningFcf / Math.pow(1 + r, year);
-            }
-
-            const terminalFcf = runningFcf * (1 + g);
-            const terminalValue = terminalFcf / (r - g);
-            const pvTerminalValue = terminalValue / Math.pow(1 + r, 5);
-            const enterpriseValue = pvExplicit + pvTerminalValue;
-            const equityValue = enterpriseValue - netDebt;
-            const fairValue = shares > 0 ? Number((equityValue / shares).toFixed(2)) : 0;
+            const fairValue = Number(runDcf({ ...inputs, terminalGrowth: g, discountRate: r }).fairValue.toFixed(2));
             const marginOfSafety =
                 fairValue > 0
                     ? Number((((fairValue - currentPrice) / fairValue) * 100).toFixed(1))
@@ -180,37 +220,78 @@ function generateSensitivityMatrix(
     return { waccSteps, growthSteps, matrix };
 }
 
-export default function CompanyShow({ company, historical, dcf_defaults, saved_scenarios, multiples, peers=[], industry_benchmarks, }: Props) {
-    // Interactive DCF State
+export default function CompanyShow({ company, historical, dcf_models, maintenance_capex, saved_scenarios, multiples, peers=[], industry_benchmarks, }: Props) {
+    // Interactive DCF State (starts on the conservative model)
+    const [model, setModel] = useState<DcfModelKey>('conservative');
+    const stage2Years = dcf_models[model].stage_2_years;
+    const horizonYears = 5 + stage2Years;
     const [baseFcfBillion, setBaseFcfBillion] = useState<number>(
-        Number((dcf_defaults.base_owner_earnings / 1e9).toFixed(2))
+        Number((dcf_models.conservative.base_owner_earnings / 1e9).toFixed(2))
     );
-    const [growthPct, setGrowthPct] = useState<number>(dcf_defaults.growth_stage_1 * 100);
+    const [growthPct, setGrowthPct] = useState<number>(dcf_models.conservative.growth_stage_1 * 100);
+    const [growth2Pct, setGrowth2Pct] = useState<number>(dcf_models.conservative.growth_stage_2 * 100);
     const [terminalGrowthPct, setTerminalGrowthPct] = useState<number>(
-        dcf_defaults.terminal_growth * 100
+        dcf_models.conservative.terminal_growth * 100
     );
-    const [waccPct, setWaccPct] = useState<number>(dcf_defaults.wacc * 100);
-    const [cashBillion, setCashBillion] = useState<number>(
-        Number((dcf_defaults.cash / 1e9).toFixed(2))
-    );
-    const [debtBillion, setDebtBillion] = useState<number>(
-        Number((dcf_defaults.total_debt / 1e9).toFixed(2))
+    const [waccPct, setWaccPct] = useState<number>(dcf_models.conservative.wacc * 100);
+    const [investmentsBillion, setInvestmentsBillion] = useState<number>(
+        Number((dcf_models.conservative.non_operating_investments / 1e9).toFixed(2))
     );
     const [sharesBillion, setSharesBillion] = useState<number>(
-        Number((dcf_defaults.shares_outstanding / 1e9).toFixed(2))
+        Number((dcf_models.conservative.shares_outstanding / 1e9).toFixed(2))
     );
+
+    // Maintenance CapEx what-if: share of trailing CapEx needed to sustain current earnings
+    const defaultMaintenanceSharePct = Number(((maintenance_capex.default_share ?? 0) * 100).toFixed(1));
+    const [maintenanceSharePct, setMaintenanceSharePct] = useState<number>(defaultMaintenanceSharePct);
+    const ttmCapex = maintenance_capex.ttm_capex ?? 0;
+    // Reference points for the slider: a low estimate (depreciation) and a high one (Greenwald)
+    const maintenanceMarkers = [
+        { label: 'D&A proxy', pct: defaultMaintenanceSharePct },
+        ...(maintenance_capex.greenwald_share !== null
+            ? [{ label: 'Greenwald', pct: Number((maintenance_capex.greenwald_share * 100).toFixed(1)) }]
+            : []),
+    ];
+    const canAdjustMaintenance = dcf_models[model].base_before_maintenance_capex !== null && ttmCapex > 0;
+
+    // Rebuilds the base figure: (base before maintenance CapEx) - share x TTM CapEx
+    const applyMaintenanceShare = (sharePct: number) => {
+        const before = dcf_models[model].base_before_maintenance_capex;
+        setMaintenanceSharePct(sharePct);
+        if (before !== null) {
+            setBaseFcfBillion(Number(((before - (sharePct / 100) * ttmCapex) / 1e9).toFixed(2)));
+        }
+    };
+
+    // Switching model loads that model's base figure and default assumptions
+    const selectModel = (next: DcfModelKey) => {
+        const d = dcf_models[next];
+        setModel(next);
+        setMaintenanceSharePct(defaultMaintenanceSharePct);
+        setActiveScenarioName(next === 'conservative' ? 'Base Case' : 'Franchise Case');
+        setBaseFcfBillion(Number((d.base_owner_earnings / 1e9).toFixed(2)));
+        setGrowthPct(Number((d.growth_stage_1 * 100).toFixed(1)));
+        setGrowth2Pct(Number((d.growth_stage_2 * 100).toFixed(1)));
+        setTerminalGrowthPct(Number((d.terminal_growth * 100).toFixed(1)));
+        setWaccPct(Number((d.wacc * 100).toFixed(2)));
+        setInvestmentsBillion(Number((d.non_operating_investments / 1e9).toFixed(2)));
+        setSharesBillion(Number((d.shares_outstanding / 1e9).toFixed(2)));
+    };
+
     const [activeScenarioName, setActiveScenarioName] = useState<string>('Base Case');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
 
     const applyScenario = (s: SavedScenario) => {
+        setModel(s.model === 'franchise' ? 'franchise' : 'conservative');
         setActiveScenarioName(s.scenario_name);
         setBaseFcfBillion(Number((s.base_fcf / 1e9).toFixed(2)));
         setGrowthPct(Number((s.growth_stage_1 * 100).toFixed(1)));
+        setGrowth2Pct(Number(((s.growth_stage_2 ?? 0) * 100).toFixed(1)));
         setTerminalGrowthPct(Number((s.terminal_growth * 100).toFixed(1)));
         setWaccPct(Number((s.wacc * 100).toFixed(2)));
-        setCashBillion(Number((s.cash_and_equivalents / 1e9).toFixed(2)));
-        setDebtBillion(Number((s.total_debt / 1e9).toFixed(2)));
+        // Scenarios saved before debt was dropped from the model keep their net effect
+        setInvestmentsBillion(Number(((s.cash_and_equivalents - s.total_debt) / 1e9).toFixed(2)));
         setSharesBillion(Number((s.shares_outstanding / 1e9).toFixed(2)));
     };
 
@@ -222,12 +303,14 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
             `/companies/${company.ticker}/scenarios`,
             {
                 scenario_name: activeScenarioName,
+                model,
                 base_fcf: baseFcfBillion * 1e9,
                 growth_stage_1: growthPct / 100,
+                growth_stage_2: stage2Years > 0 ? growth2Pct / 100 : null,
                 terminal_growth: terminalGrowthPct / 100,
                 wacc: waccPct / 100,
-                cash_and_equivalents: cashBillion * 1e9,
-                total_debt: debtBillion * 1e9,
+                cash_and_equivalents: investmentsBillion * 1e9,
+                total_debt: 0,
                 shares_outstanding: sharesBillion * 1e9,
                 calculated_fair_value: valuation.fairValue,
                 notes: `Valued at $${valuation.fairValue} with ${growthPct}% 5Y growth & ${waccPct}% WACC`,
@@ -246,78 +329,64 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
 
     const sensitivity = useMemo(() => {
         return generateSensitivityMatrix(
-            baseFcfBillion * 1e9,
-            growthPct / 100,
+            {
+                base: baseFcfBillion * 1e9,
+                growthStage1: growthPct / 100,
+                growthStage2: growth2Pct / 100,
+                stage2Years,
+                investments: investmentsBillion * 1e9,
+                shares: sharesBillion * 1e9,
+            },
             waccPct,
             terminalGrowthPct,
-            cashBillion * 1e9,
-            debtBillion * 1e9,
-            sharesBillion * 1e9,
             company.current_price
         );
     }, [
             baseFcfBillion,
             growthPct,
+            growth2Pct,
+            stage2Years,
             waccPct,
             terminalGrowthPct,
-            cashBillion,
-            debtBillion,
+            investmentsBillion,
             sharesBillion,
             company.current_price
     ]);
 
     // Live Reactive Valuation Calculation
     const valuation = useMemo(() => {
-        const baseFcf = baseFcfBillion * 1e9;
-        const g1 = growthPct / 100;
         const gTerm = terminalGrowthPct / 100;
-        const r = Math.max(waccPct / 100, gTerm + 0.005);
-        const cash = cashBillion * 1e9;
-        const debt = debtBillion * 1e9;
-        const shares = sharesBillion * 1e9;
-
-        let pvExplicit = 0;
-        let runningFcf = baseFcf;
-        const projections = [];
-
-        for (let year = 1; year <= 5; year++) {
-            runningFcf *= 1 + g1;
-            const pv = runningFcf / Math.pow(1 + r, year);
-            pvExplicit += pv;
-            projections.push({
-                year: `Year ${year}`,
-                fcf: runningFcf / 1e9,
-                pv_fcf: pv / 1e9,
-            });
-        }
-
-        const terminalFcf = runningFcf * (1 + gTerm);
-        const terminalValue = terminalFcf / (r - gTerm);
-        const pvTerminalValue = terminalValue / Math.pow(1 + r, 5);
-        const enterpriseValue = pvExplicit + pvTerminalValue;
-        const netDebt = debt - cash;
-        const equityValue = enterpriseValue - netDebt;
-        const fairValue = shares > 0 ? equityValue / shares : 0;
+        const result = runDcf({
+            base: baseFcfBillion * 1e9,
+            growthStage1: growthPct / 100,
+            growthStage2: growth2Pct / 100,
+            stage2Years,
+            terminalGrowth: gTerm,
+            discountRate: Math.max(waccPct / 100, gTerm + 0.005),
+            investments: investmentsBillion * 1e9,
+            shares: sharesBillion * 1e9,
+        });
         const marginOfSafety =
-            fairValue > 0 ? ((fairValue - company.current_price) / fairValue) * 100 : 0;
+            result.fairValue > 0 ? ((result.fairValue - company.current_price) / result.fairValue) * 100 : 0;
 
         return {
-            pvExplicit: pvExplicit / 1e9,
-            terminalValue: terminalValue / 1e9,
-            pvTerminalValue: pvTerminalValue / 1e9,
-            enterpriseValue: enterpriseValue / 1e9,
-            equityValue: equityValue / 1e9,
-            fairValue: Number(fairValue.toFixed(2)),
+            pvExplicit: result.pvExplicit / 1e9,
+            terminalValue: result.terminalValue / 1e9,
+            pvTerminalValue: result.pvTerminalValue / 1e9,
+            earningsValue: result.earningsValue / 1e9,
+            equityValue: result.equityValue / 1e9,
+            fairValue: Number(result.fairValue.toFixed(2)),
             marginOfSafety: Number(marginOfSafety.toFixed(1)),
-            projections,
+            projections: result.projections,
         };
     }, [
         baseFcfBillion,
         growthPct,
+        growth2Pct,
+        stage2Years,
         terminalGrowthPct,
         waccPct,
-        cashBillion,
-        debtBillion,
+        investmentsBillion,
         sharesBillion,
         company.current_price,
     ]);
@@ -524,14 +593,28 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                     <Card className="lg:col-span-3">
                         <CardHeader>
                             <CardTitle>Discounted Cash Flow Assumptions</CardTitle>
+                            <Tabs value={model} onValueChange={(value) => selectModel(value as DcfModelKey)} className="pt-2">
+                                <TabsList>
+                                    {(Object.keys(DCF_MODEL_COPY) as DcfModelKey[]).map((key) => (
+                                        <TabsTrigger key={key} value={key}>
+                                            {DCF_MODEL_COPY[key].label}
+                                            {dcf_models[key].fair_value_per_share !== null && (
+                                                <span className="ml-2 font-mono text-xs text-muted-foreground">
+                                                    {formatCurrency(dcf_models[key].fair_value_per_share as number)}
+                                                </span>
+                                            )}
+                                        </TabsTrigger>
+                                    ))}
+                                </TabsList>
+                            </Tabs>
                             <CardDescription>
-                                Fair value discounts True Owner Earnings (normalized net income plus depreciation & amortization, less maintenance CapEx). Adjust the parameters to recalculate intrinsic value.
+                                {DCF_MODEL_COPY[model].description} Adjust the parameters to recalculate intrinsic value.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label>Base True Owner Earnings, TTM ($B)</Label>
+                                    <Label>{DCF_MODEL_COPY[model].baseLabel}</Label>
                                     <Input
                                         type="number"
                                         step="0.1"
@@ -548,23 +631,17 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                                         onChange={(e) => setSharesBillion(parseFloat(e.target.value) || 0.1)}
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>Cash & Short Term Investments ($B)</Label>
+                                <div className="space-y-2 sm:col-span-2">
+                                    <Label>Long-Term Investments Not In Earnings ($B)</Label>
                                     <Input
                                         type="number"
                                         step="0.1"
-                                        value={cashBillion}
-                                        onChange={(e) => setCashBillion(parseFloat(e.target.value) || 0)}
+                                        value={investmentsBillion}
+                                        onChange={(e) => setInvestmentsBillion(parseFloat(e.target.value) || 0)}
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Total Debt ($B)</Label>
-                                    <Input
-                                        type="number"
-                                        step="0.1"
-                                        value={debtBillion}
-                                        onChange={(e) => setDebtBillion(parseFloat(e.target.value) || 0)}
-                                    />
+                                    <p className="text-[11px] text-muted-foreground">
+                                        Debt and cash are not adjusted for: the base figure is after interest paid and earned, so it already belongs to shareholders.
+                                    </p>
                                 </div>
                             </div>
 
@@ -572,9 +649,47 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
 
                             {/* Sliders */}
                             <div className="space-y-5">
+                                {canAdjustMaintenance && (
+                                    <div>
+                                        <div className="flex justify-between text-sm">
+                                            <Label>Maintenance CapEx Share of Total CapEx: {maintenanceSharePct}%</Label>
+                                            <span className="text-xs text-muted-foreground">
+                                                ${((maintenanceSharePct / 100) * ttmCapex / 1e9).toFixed(2)}B of ${(ttmCapex / 1e9).toFixed(2)}B TTM CapEx
+                                            </span>
+                                        </div>
+                                        <Slider
+                                            value={[maintenanceSharePct]}
+                                            min={0}
+                                            max={100}
+                                            step={0.5}
+                                            onValueChange={(val) => applyMaintenanceShare(val[0])}
+                                            className="mt-2"
+                                        />
+                                        {/* Reference markers: click one to jump the slider to that estimate */}
+                                        <div className="relative mt-1 h-9">
+                                            {maintenanceMarkers.map((marker) => (
+                                                <button
+                                                    key={marker.label}
+                                                    type="button"
+                                                    onClick={() => applyMaintenanceShare(marker.pct)}
+                                                    className="absolute top-0 flex -translate-x-1/2 flex-col items-center text-[10px] leading-tight text-muted-foreground hover:text-primary"
+                                                    style={{ left: `${marker.pct}%` }}
+                                                >
+                                                    <span className="h-2 w-px bg-current" />
+                                                    <span className="whitespace-nowrap font-medium">{marker.label}</span>
+                                                    <span className="font-mono">{marker.pct}%</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <p className="mt-1 text-[11px] text-muted-foreground">
+                                            Maintenance CapEx is not reported, so it has to be estimated. The D&A proxy tends to run low for a fast-growing asset base and the Greenwald estimate tends to run high when capacity is built ahead of demand; the truth usually lies between them. Moving the slider recalculates the base figure above.
+                                        </p>
+                                    </div>
+                                )}
+
                                 <div>
                                     <div className="flex justify-between text-sm">
-                                        <Label>5-Year Annual Owner Earnings Growth Rate: {growthPct}%</Label>
+                                        <Label>Annual Owner Earnings Growth, Years 1-5: {growthPct}%</Label>
                                     </div>
                                     <Slider
                                         value={[growthPct]}
@@ -585,6 +700,22 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                                         className="mt-2"
                                     />
                                 </div>
+
+                                {stage2Years > 0 && (
+                                    <div>
+                                        <div className="flex justify-between text-sm">
+                                            <Label>Annual Owner Earnings Growth, Years 6-10: {growth2Pct}%</Label>
+                                        </div>
+                                        <Slider
+                                            value={[growth2Pct]}
+                                            min={-10}
+                                            max={35}
+                                            step={0.5}
+                                            onValueChange={(val) => setGrowth2Pct(val[0])}
+                                            className="mt-2"
+                                        />
+                                    </div>
+                                )}
 
                                 <div>
                                     <div className="flex justify-between text-sm">
@@ -621,7 +752,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                     <Card className="flex flex-col justify-between">
                         <CardHeader>
                             <CardTitle>Intrinsic Valuation Output</CardTitle>
-                            <CardDescription>Gordon Growth Terminal Value Model</CardDescription>
+                            <CardDescription>{DCF_MODEL_COPY[model].label} model, Gordon Growth terminal value</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-5">
                             <div className="rounded-lg border bg-neutral-50 p-4 dark:bg-neutral-900">
@@ -643,7 +774,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
 
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">PV of Explicit 5Y Owner Earnings</span>
+                                    <span className="text-muted-foreground">PV of Explicit {horizonYears}Y Owner Earnings</span>
                                     <span className="font-mono font-medium">${valuation.pvExplicit.toFixed(2)}B</span>
                                 </div>
                                 <div className="flex justify-between">
@@ -653,13 +784,13 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                                     </span>
                                 </div>
                                 <div className="flex justify-between border-t pt-1 font-semibold">
-                                    <span>Enterprise Value</span>
-                                    <span className="font-mono">${valuation.enterpriseValue.toFixed(2)}B</span>
+                                    <span>Value of Owner Earnings</span>
+                                    <span className="font-mono">${valuation.earningsValue.toFixed(2)}B</span>
                                 </div>
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">Net Debt (Debt - Cash)</span>
+                                    <span className="text-muted-foreground">Plus Long-Term Investments</span>
                                     <span className="font-mono font-medium">
-                                        ${(debtBillion - cashBillion).toFixed(2)}B
+                                        ${investmentsBillion.toFixed(2)}B
                                     </span>
                                 </div>
                                 <div className="flex justify-between border-t pt-1 font-bold text-neutral-900 dark:text-neutral-100">

@@ -27,24 +27,54 @@ class CompanyValuationController
         // The relation already sorts newest-first, which takes precedence over the order above
         $latestFinancial = $financials->first();
 
-        // 2. DCF Inputs: TTM True Owner Earnings (built on normalized earnings), balance sheet numbers and the base-case
-        // assumptions are all pre-calculated in fact_daily_market_valuation. The page
-        // recalculates the model client-side as the user moves the sliders.
+        // 2. DCF Inputs: both models' base figures, balance sheet numbers and base-case
+        // assumptions are pre-calculated in fact_daily_market_valuation. The page
+        // recalculates the selected model client-side as the user moves the sliders.
         $currentPrice = (float) ($latestVal?->close_price ?? 0);
         $sharesOutstanding = (float) ($latestVal?->shares_outstanding ?? 1e9);
-        $baseOwnerEarnings = (float) ($latestVal?->ttm_true_owner_earnings ?? $latestFinancial?->true_owner_earnings ?? 5e9);
-        $cash = (float) ($latestVal?->cash_and_cash_equivalents ?? 0);
-        $debt = (float) ($latestVal?->total_debt ?? $latestVal?->total_liabilities ?? 0);
+        // Both base figures are after interest, so the models value equity directly: no
+        // debt is subtracted and no cash added, only investments whose gains are excluded
+        $investments = (float) ($latestVal?->non_operating_investments ?? 0);
+        $ownerEarnings = (float) ($latestVal?->ttm_true_owner_earnings ?? $latestFinancial?->true_owner_earnings ?? 5e9);
+        $cashOwnerEarnings = (float) ($latestVal?->ttm_cash_owner_earnings ?? $latestFinancial?->cash_owner_earnings ?? 5e9);
 
-        $dcfDefaults = [
-            'base_owner_earnings' => $baseOwnerEarnings > 0 ? $baseOwnerEarnings : 5e9,
-            'growth_stage_1' => (float) ($latestVal?->dcf_growth_stage_1 ?? 0.10),
-            'terminal_growth' => (float) ($latestVal?->dcf_terminal_growth ?? 0.025),
-            'wacc' => (float) ($latestVal?->dcf_discount_rate ?? 0.085),
-            'cash' => $cash,
-            'total_debt' => $debt,
-            'shares_outstanding' => $sharesOutstanding,
-            'current_price' => $currentPrice,
+        // Maintenance CapEx what-if: the page rebuilds each base figure as
+        // (base before maintenance CapEx) - share x TTM CapEx. NULL when the trailing
+        // figures are incomplete, which hides the input.
+        $ttmCapex = $latestVal?->ttm_capital_expenditures !== null ? (float) $latestVal->ttm_capital_expenditures : null;
+        $ttmMaintenanceCapex = $latestVal?->ttm_maintenance_capex !== null ? (float) $latestVal->ttm_maintenance_capex : null;
+        $maintenanceShare = $latestVal?->maintenance_capex_share !== null ? (float) $latestVal->maintenance_capex_share : null;
+        $beforeMaintenance = fn (float $base) => $base > 0 && $ttmCapex > 0 && $ttmMaintenanceCapex !== null && $maintenanceShare !== null
+            ? $base + $ttmMaintenanceCapex
+            : null;
+
+        $dcfModels = [
+            // Conservative: 5 years of growth on True Owner Earnings
+            'conservative' => [
+                'base_owner_earnings' => $ownerEarnings > 0 ? $ownerEarnings : 5e9,
+                'base_before_maintenance_capex' => $beforeMaintenance($ownerEarnings),
+                'growth_stage_1' => (float) ($latestVal?->dcf_growth_stage_1 ?? 0.10),
+                'growth_stage_2' => 0.0,
+                'stage_2_years' => 0,
+                'terminal_growth' => (float) ($latestVal?->dcf_terminal_growth ?? 0.025),
+                'wacc' => (float) ($latestVal?->dcf_discount_rate ?? 0.085),
+                'non_operating_investments' => $investments,
+                'shares_outstanding' => $sharesOutstanding,
+                'fair_value_per_share' => $latestVal?->fair_value_per_share !== null ? (float) $latestVal->fair_value_per_share : null,
+            ],
+            // Franchise: 10 years of growth in two stages on Cash Owner Earnings
+            'franchise' => [
+                'base_owner_earnings' => $cashOwnerEarnings > 0 ? $cashOwnerEarnings : 5e9,
+                'base_before_maintenance_capex' => $beforeMaintenance($cashOwnerEarnings),
+                'growth_stage_1' => (float) ($latestVal?->franchise_growth_stage_1 ?? 0.15),
+                'growth_stage_2' => (float) ($latestVal?->franchise_growth_stage_2 ?? 0.10),
+                'stage_2_years' => 5,
+                'terminal_growth' => (float) ($latestVal?->franchise_terminal_growth ?? 0.025),
+                'wacc' => (float) ($latestVal?->franchise_discount_rate ?? 0.085),
+                'non_operating_investments' => $investments,
+                'shares_outstanding' => $sharesOutstanding,
+                'fair_value_per_share' => $latestVal?->franchise_fair_value_per_share !== null ? (float) $latestVal->franchise_fair_value_per_share : null,
+            ],
         ];
 
         // 3. Multiples: Pass through directly from fact_daily_market_valuation
@@ -146,7 +176,12 @@ class CompanyValuationController
                 'sma_50' => $latestVal?->sma_50,
             ],
             'historical' => $historical,
-            'dcf_defaults' => $dcfDefaults,
+            'dcf_models' => $dcfModels,
+            'maintenance_capex' => [
+                'ttm_capex' => $ttmCapex,
+                'default_share' => $maintenanceShare,
+                'greenwald_share' => $latestVal?->greenwald_maintenance_capex_share !== null ? (float) $latestVal->greenwald_maintenance_capex_share : null,
+            ],
             'saved_scenarios' => $savedScenarios,
             'multiples' => $multiples,
             'peers' => $peers,
@@ -158,8 +193,10 @@ class CompanyValuationController
     {
         $validated = $request->validate([
             'scenario_name' => 'required|string|max:50',
+            'model' => 'required|in:conservative,franchise',
             'base_fcf' => 'required|numeric',
             'growth_stage_1' => 'required|numeric',
+            'growth_stage_2' => 'nullable|numeric',
             'terminal_growth' => 'required|numeric',
             'wacc' => 'required|numeric',
             'cash_and_equivalents' => 'required|numeric',

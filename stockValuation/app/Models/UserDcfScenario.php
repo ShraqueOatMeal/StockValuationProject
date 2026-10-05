@@ -11,8 +11,10 @@ class UserDcfScenario extends Model
         'user_id',
         'ticker',
         'scenario_name',
+        'model',
         'base_fcf',
         'growth_stage_1',
+        'growth_stage_2',
         'terminal_growth',
         'wacc',
         'cash_and_equivalents',
@@ -25,6 +27,7 @@ class UserDcfScenario extends Model
     protected $casts = [
         'base_fcf' => 'float',
         'growth_stage_1' => 'float',
+        'growth_stage_2' => 'float',
         'terminal_growth' => 'float',
         'wacc' => 'float',
         'cash_and_equivalents' => 'float',

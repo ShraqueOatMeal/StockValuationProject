@@ -39,6 +39,12 @@ tag_map (gaap_tag, metric, tag_priority) as (
         ('ShortTermBorrowings', 'short_term_borrowings', 1),
         ('StockholdersEquity', 'stockholders_equity', 1),
         ('CashAndCashEquivalentsAtCarryingValue', 'cash_and_cash_equivalents', 1),
+        ('CashCashEquivalentsAndShortTermInvestments', 'cash_and_short_term_investments', 1),
+        ('MarketableSecuritiesCurrent', 'short_term_investments', 1),
+        ('AvailableForSaleSecuritiesDebtSecuritiesCurrent', 'short_term_investments', 2),
+        ('AvailableForSaleSecuritiesCurrent', 'short_term_investments', 3),
+        ('ShortTermInvestments', 'short_term_investments', 4),
+        ('OtherLongTermInvestments', 'non_operating_investments', 1),
         ('PropertyPlantAndEquipmentNet', 'ppe_net', 1),
         ('PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization', 'ppe_net', 2),
         ('CommonStockSharesOutstanding', 'shares_balance_sheet', 1),
@@ -185,7 +191,14 @@ instants_pivoted as (
         ) + coalesce(max(amount) filter (where metric = 'short_term_borrowings'), 0) as total_debt,
         max(amount) filter (where metric = 'stockholders_equity') as stockholders_equity,
         max(amount) filter (where metric = 'cash_and_cash_equivalents') as cash_and_cash_equivalents,
+        -- Cash plus marketable securities: the combined tag, else cash + short-term investments
+        coalesce(
+            max(amount) filter (where metric = 'cash_and_short_term_investments'),
+            max(amount) filter (where metric = 'cash_and_cash_equivalents')
+                + max(amount) filter (where metric = 'short_term_investments')
+        ) as cash_and_short_term_investments,
         max(amount) filter (where metric = 'ppe_net') as property_plant_equipment_net,
+        max(amount) filter (where metric = 'non_operating_investments') as non_operating_investments,
         max(amount) filter (where metric = 'shares_balance_sheet') as shares_balance_sheet
     from instants
     where metric <> 'shares_cover_page'
@@ -231,6 +244,7 @@ yf_quarterly as (
         max(amount) filter (where line_item = 'Total Debt') as total_debt,
         max(amount) filter (where line_item = 'Stockholders Equity') as stockholders_equity,
         max(amount) filter (where line_item = 'Cash And Cash Equivalents') as cash_and_cash_equivalents,
+        max(amount) filter (where line_item = 'Cash Cash Equivalents And Short Term Investments') as cash_and_short_term_investments,
         max(amount) filter (where line_item = 'Operating Cash Flow') as operating_cash_flow,
         abs(max(amount) filter (where line_item = 'Capital Expenditure')) as capital_expenditures,
         max(amount) filter (where line_item = 'Stock Based Compensation') as stock_based_compensation,
@@ -239,6 +253,7 @@ yf_quarterly as (
             max(amount) filter (where line_item = 'Depreciation Amortization Depletion')
         ) as depreciation_and_amortization,
         max(amount) filter (where line_item = 'Net PPE') as property_plant_equipment_net,
+        max(amount) filter (where line_item = 'Other Investments') as non_operating_investments,
         max(amount) filter (where line_item = 'Ordinary Shares Number') as shares_outstanding,
         max(amount) filter (where line_item = 'Diluted Average Shares') as diluted_shares
     from {{ ref('stg_yf_fundamentals') }}
@@ -337,9 +352,19 @@ quarter_inputs as (
         coalesce(y.total_debt, i.total_debt) as total_debt,
         coalesce(i.stockholders_equity, y.stockholders_equity) as stockholders_equity,
         coalesce(i.cash_and_cash_equivalents, y.cash_and_cash_equivalents) as cash_and_cash_equivalents,
+        -- Falls back to plain cash when no short-term investments are reported
+        coalesce(
+            i.cash_and_short_term_investments,
+            y.cash_and_short_term_investments,
+            i.cash_and_cash_equivalents,
+            y.cash_and_cash_equivalents
+        ) as cash_and_short_term_investments,
         coalesce(f.operating_cash_flow, y.operating_cash_flow) as operating_cash_flow,
         coalesce(f.capital_expenditures, y.capital_expenditures) as capital_expenditures,
         coalesce(f.stock_based_compensation, y.stock_based_compensation) as stock_based_compensation,
+        -- Long-term investment holdings (mostly non-marketable equity stakes). Their gains
+        -- are stripped from normalized earnings, so their value is added back in the DCF.
+        coalesce(i.non_operating_investments, y.non_operating_investments, 0) as non_operating_investments,
         -- Reported D&A by source; combined in order of preference in the next step
         f.depreciation_and_amortization as sec_depreciation_and_amortization,
         y.depreciation_and_amortization as yf_depreciation_and_amortization,
@@ -512,6 +537,8 @@ ratios as (
     total_debt,
     stockholders_equity,
     cash_and_cash_equivalents,
+    cash_and_short_term_investments,
+    non_operating_investments,
     operating_cash_flow,
     capital_expenditures,
     stock_based_compensation,
@@ -536,6 +563,11 @@ ratios as (
     -- Without reported D&A, depreciation is estimated from the net PP&E roll-forward; if
     -- that is not possible either, the add-back and its proxy cancel, leaving net income.
     (coalesce(normalized_net_income, net_income) + coalesce(depreciation_basis - maintenance_capex, 0)) as true_owner_earnings,
+
+    -- Cash Owner Earnings: operating cash flow less maintenance CapEx. Unlike True Owner
+    -- Earnings it keeps working capital movements and adds back stock-based compensation.
+    -- All CapEx counts as maintenance when depreciation is unknown.
+    (operating_cash_flow - coalesce(maintenance_capex, capital_expenditures, 0)) as cash_owner_earnings,
 
     -- FCF / Net Income conversion (not meaningful when net income is zero or negative)
     case
@@ -566,6 +598,14 @@ with_ttm as (
     case when count(r.free_cash_flow) over w_ttm = 4 then sum(r.free_cash_flow) over w_ttm end as ttm_fcf,
     case when count(r.operating_cash_flow) over w_ttm = 4 then sum(r.operating_cash_flow) over w_ttm end as ttm_operating_cash_flow,
     case when count(r.true_owner_earnings) over w_ttm = 4 then sum(r.true_owner_earnings) over w_ttm end as ttm_true_owner_earnings,
+    case when count(r.cash_owner_earnings) over w_ttm = 4 then sum(r.cash_owner_earnings) over w_ttm end as ttm_cash_owner_earnings,
+    case when count(r.capital_expenditures) over w_ttm = 4 then sum(r.capital_expenditures) over w_ttm end as ttm_capital_expenditures,
+    case when count(r.maintenance_capex) over w_ttm = 4 then sum(r.maintenance_capex) over w_ttm end as ttm_maintenance_capex,
+    -- Share of trailing CapEx treated as maintenance (the rest is growth CapEx)
+    case
+        when count(r.maintenance_capex) over w_ttm = 4 and count(r.capital_expenditures) over w_ttm = 4
+        then round(sum(r.maintenance_capex) over w_ttm / nullif(sum(r.capital_expenditures) over w_ttm, 0), 4)
+    end as maintenance_capex_share,
 
     -- YoY Quarter Comparison (same quarter 1 year ago)
     py.total_revenue as prev_year_revenue,
@@ -585,6 +625,40 @@ with_ttm as (
       order by r.period_end_date
       range between interval '300 days' preceding and current row
     )
+),
+
+-- Greenwald's estimate of maintenance CapEx, independent of depreciation:
+--   growth CapEx      = (net PP&E / TTM revenue) x (TTM revenue - TTM revenue a year ago)
+--   maintenance CapEx = TTM CapEx - growth CapEx, kept between zero and total CapEx
+-- It runs high when capacity is built ahead of demand, since PP&E arrives before the sales.
+with_greenwald as (
+  select
+    t.*,
+    g.greenwald_maintenance_capex as ttm_greenwald_maintenance_capex,
+    round(g.greenwald_maintenance_capex / nullif(t.ttm_capital_expenditures, 0), 4) as greenwald_maintenance_capex_share
+  from with_ttm t
+  left join with_ttm py
+    on t.ticker = py.ticker
+    and py.fiscal_year = t.fiscal_year - 1
+    and py.fiscal_period = t.fiscal_period
+  cross join lateral (
+    select
+      -- NULL unless PP&E, CapEx and both years of trailing revenue are all available
+      case
+        when t.property_plant_equipment_net is not null
+         and t.ttm_capital_expenditures is not null
+         and t.ttm_revenue > 0
+         and py.ttm_revenue is not null
+        then least(
+          greatest(
+            t.ttm_capital_expenditures
+              - greatest(t.property_plant_equipment_net / t.ttm_revenue * (t.ttm_revenue - py.ttm_revenue), 0),
+            0
+          ),
+          t.ttm_capital_expenditures
+        )
+      end as greenwald_maintenance_capex
+  ) g
 )
 
-select * from with_ttm
+select * from with_greenwald
