@@ -135,12 +135,17 @@ export default function Dashboard({ auth, watchlist }: DashboardProps) {
                                                             </Link>
                                                         </TableCell>
                                                         <TableCell>
-                                                            <div className="font-medium text-neutral-900 dark:text-neutral-100">
-                                                                {stock.name}
-                                                            </div>
-                                                            <div className="text-xs text-muted-foreground">
-                                                                {stock.exchange} • {stock.industry}
-                                                            </div>
+                                                            <Link
+                                                                href={`/companies/${stock.ticker}`}
+                                                                className="hover:underline"
+                                                            >
+                                                                <div className="font-medium text-neutral-900 dark:text-neutral-100">
+                                                                    {stock.name}
+                                                                </div>
+                                                                <div className="text-xs text-muted-foreground">
+                                                                    {stock.exchange} • {stock.industry}
+                                                                </div>
+                                                            </Link>
                                                         </TableCell>
                                                         <TableCell className="text-right font-medium">
                                                             {formatCurrency(stock.close_price, stock.currency)}
