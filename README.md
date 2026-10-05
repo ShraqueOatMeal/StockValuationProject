@@ -61,15 +61,14 @@ Notes on `fact_quarterly_financials`:
 
 ### Fair value
 
-`fact_daily_market_valuation` carries two DCF fair values, shown as two tabs on the company page. Both use a Gordon Growth terminal value. Their base cash flows are after interest, so the discounted value is equity value: debt is not subtracted and cash is not added, since interest paid and earned are already in the cash flows. Long-term investments (`non_operating_investments`) are added because their gains are excluded from the base.
+`fact_daily_market_valuation` carries two DCF fair values, shown as two tabs on the company page. Both project 10 years of growth in two stages and then a Gordon Growth terminal value. Their base cash flows are after interest, so the discounted value is equity value: debt is not subtracted and cash is not added, since interest paid and earned are already in the cash flows. Long-term investments (`non_operating_investments`) are added because their gains are excluded from the base.
 
 | | Conservative | Franchise |
 | --- | --- | --- |
 | Columns | `fair_value_per_share`, `margin_of_safety` | `franchise_fair_value_per_share`, `franchise_margin_of_safety` |
 | Base cash flow (TTM) | True Owner Earnings: normalized net income + D&A − maintenance CapEx | Cash Owner Earnings: operating cash flow − maintenance CapEx |
-| Growth | 10% for years 1–5 | 15% for years 1–5, 10% for years 6–10 |
+| Growth | 10% for years 1–5, 7% for years 6–10 | 15% for years 1–5, 10% for years 6–10 |
 | Terminal growth / discount rate | 2.5% / 8.5% | 2.5% / 8.5% |
-| Added to the discounted value | Long-term investments | Long-term investments |
 
 The assumptions are dbt vars in `dbt_afive/dbt_project.yml` (`dcf_*` and `dcf_franchise_*`). The company page starts from these values and recalculates the selected model in the browser as the sliders move; that what-if calculation cannot live in dbt because it depends on user input.
 

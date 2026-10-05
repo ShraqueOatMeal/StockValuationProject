@@ -6,29 +6,34 @@ financials as (
     select * from "afive_dw"."gold"."fact_quarterly_financials"
 ),
 
--- Base-case DCF assumptions (dbt vars). With constant growth the model collapses to a
--- single multiple of the base-year cash flow:
---   sum over years 1-5 of ((1+g)/(1+r))^t  +  ((1+g)/(1+r))^5 * (1+g_term) / (r - g_term)
+-- Both models share one shape: two growth stages of five years each, then a Gordon
+-- Growth terminal value. With constant rates it collapses to a multiple of the base flow:
+--   q1 = (1+g1)/(1+r), q2 = (1+g2)/(1+r)
+--   sum(q1^t, t=1..5) + q1^5 * sum(q2^t, t=1..5) + q1^5 * q2^5 * (1+g_term) / (r - g_term)
+-- Conservative model assumptions (dbt vars)
 dcf_assumptions as (
     select
         a.*,
-        (
-            select sum(power((1 + a.growth_stage_1) / (1 + a.discount_rate), t))
-            from generate_series(1, 5) as t
-        )
-        + power((1 + a.growth_stage_1) / (1 + a.discount_rate), 5)
+        (select sum(power(a.q1, t)) from generate_series(1, 5) as t)
+        + power(a.q1, 5) * (select sum(power(a.q2, t)) from generate_series(1, 5) as t)
+        + power(a.q1, 5) * power(a.q2, 5)
             * (1 + a.terminal_growth) / (a.discount_rate - a.terminal_growth) as dcf_multiple
     from (
         select
-            0.1::numeric as growth_stage_1,
-            0.025::numeric as terminal_growth,
-            0.085::numeric as discount_rate
+            v.*,
+            (1 + v.growth_stage_1) / (1 + v.discount_rate) as q1,
+            (1 + v.growth_stage_2) / (1 + v.discount_rate) as q2
+        from (
+            select
+                0.1::numeric as growth_stage_1,
+                0.07::numeric as growth_stage_2,
+                0.025::numeric as terminal_growth,
+                0.085::numeric as discount_rate
+        ) v
     ) a
 ),
 
--- Franchise model: two growth stages of five years each before the terminal value.
---   q1 = (1+g1)/(1+r), q2 = (1+g2)/(1+r)
---   sum(q1^t, t=1..5) + q1^5 * sum(q2^t, t=1..5) + q1^5 * q2^5 * (1+g_term) / (r - g_term)
+-- Franchise model assumptions (dbt vars)
 franchise_assumptions as (
     select
         a.*,
@@ -134,13 +139,14 @@ joined as (
 
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_true_owner_earnings, 0), 2) as p_owner_earnings_ratio,
 
-        -- Fair Value: 5-year DCF of TTM True Owner Earnings plus a Gordon Growth terminal
+        -- Fair Value: 10-year, two-stage DCF of TTM True Owner Earnings plus a Gordon Growth terminal
         -- value. Owner earnings start from net income, which is already after interest,
         -- so the result is equity value: debt is not subtracted and cash is not added
         -- (interest paid and earned are both in the earnings). Long-term investments are
         -- added because their gains were stripped out of normalized earnings. NULL when
         -- owner earnings are not positive or the real share count is unknown.
         d.growth_stage_1 as dcf_growth_stage_1,
+        d.growth_stage_2 as dcf_growth_stage_2,
         d.terminal_growth as dcf_terminal_growth,
         d.discount_rate as dcf_discount_rate,
         case
@@ -166,6 +172,7 @@ joined as (
                 2
             )
         end as franchise_equity_value_per_share,
+
 
         -- Price-to-Performance indicators (Relative Yield)
         round(p.dividend_amount / nullif(p.adj_close, 0), 6) as daily_dividend_yield,

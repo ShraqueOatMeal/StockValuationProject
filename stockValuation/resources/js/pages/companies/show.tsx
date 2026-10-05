@@ -57,7 +57,7 @@ const DCF_MODEL_COPY: Record<DcfModelKey, { label: string; baseLabel: string; de
         label: 'Conservative',
         baseLabel: 'Base True Owner Earnings, TTM ($B)',
         description:
-            'Stress-test case. Discounts True Owner Earnings (normalized net income plus depreciation & amortization, less maintenance CapEx) over 5 years of growth. Assumes maintenance CapEx is roughly equal to D&A.',
+            'Cautious case. Discounts True Owner Earnings (normalized net income plus depreciation & amortization, less maintenance CapEx; stock-based compensation counts as a cost) over 10 years of growth in two stages. Assumes maintenance CapEx is roughly equal to D&A.',
     },
     franchise: {
         label: 'Franchise',
@@ -145,7 +145,7 @@ interface DcfInputs {
 }
 
 // Shared by the live valuation and the sensitivity matrix: 5 years at the stage-1 growth
-// rate, optionally followed by a second stage, then a Gordon Growth terminal value.
+// rate, 5 more at the stage-2 rate, then a Gordon Growth terminal value.
 // The cash flows are after interest, so their present value is equity value; long-term
 // investments excluded from those cash flows are added on top.
 function runDcf({ base, growthStage1, growthStage2, stage2Years, terminalGrowth, discountRate, investments, shares }: DcfInputs) {
@@ -268,7 +268,7 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
         const d = dcf_models[next];
         setModel(next);
         setMaintenanceSharePct(defaultMaintenanceSharePct);
-        setActiveScenarioName(next === 'conservative' ? 'Base Case' : 'Franchise Case');
+        setActiveScenarioName(next === 'conservative' ? 'Base Case' : `${DCF_MODEL_COPY[next].label} Case`);
         setBaseFcfBillion(Number((d.base_owner_earnings / 1e9).toFixed(2)));
         setGrowthPct(Number((d.growth_stage_1 * 100).toFixed(1)));
         setGrowth2Pct(Number((d.growth_stage_2 * 100).toFixed(1)));
@@ -283,11 +283,13 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
     const [saveSuccess, setSaveSuccess] = useState(false);
 
     const applyScenario = (s: SavedScenario) => {
-        setModel(s.model === 'franchise' ? 'franchise' : 'conservative');
+        const scenarioModel: DcfModelKey = s.model === 'franchise' ? 'franchise' : 'conservative';
+        setModel(scenarioModel);
         setActiveScenarioName(s.scenario_name);
         setBaseFcfBillion(Number((s.base_fcf / 1e9).toFixed(2)));
         setGrowthPct(Number((s.growth_stage_1 * 100).toFixed(1)));
-        setGrowth2Pct(Number(((s.growth_stage_2 ?? 0) * 100).toFixed(1)));
+        // Scenarios saved under the old 5-year model have no stage-2 rate; use the default
+        setGrowth2Pct(Number(((s.growth_stage_2 ?? dcf_models[scenarioModel].growth_stage_2) * 100).toFixed(1)));
         setTerminalGrowthPct(Number((s.terminal_growth * 100).toFixed(1)));
         setWaccPct(Number((s.wacc * 100).toFixed(2)));
         // Scenarios saved before debt was dropped from the model keep their net effect

@@ -49,13 +49,13 @@ class CompanyValuationController
             : null;
 
         $dcfModels = [
-            // Conservative: 5 years of growth on True Owner Earnings
+            // Conservative: 10 years of growth in two stages on True Owner Earnings
             'conservative' => [
                 'base_owner_earnings' => $ownerEarnings > 0 ? $ownerEarnings : 5e9,
                 'base_before_maintenance_capex' => $beforeMaintenance($ownerEarnings),
                 'growth_stage_1' => (float) ($latestVal?->dcf_growth_stage_1 ?? 0.10),
-                'growth_stage_2' => 0.0,
-                'stage_2_years' => 0,
+                'growth_stage_2' => (float) ($latestVal?->dcf_growth_stage_2 ?? 0.07),
+                'stage_2_years' => 5,
                 'terminal_growth' => (float) ($latestVal?->dcf_terminal_growth ?? 0.025),
                 'wacc' => (float) ($latestVal?->dcf_discount_rate ?? 0.085),
                 'non_operating_investments' => $investments,
