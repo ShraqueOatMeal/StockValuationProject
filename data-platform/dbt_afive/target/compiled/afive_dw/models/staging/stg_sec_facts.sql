@@ -22,6 +22,14 @@ target_tags as (
         ('us-gaap', 'GrossProfit', 'USD'),
         ('us-gaap', 'OperatingIncomeLoss', 'USD'),
         ('us-gaap', 'NetIncomeLoss', 'USD'),
+        ('us-gaap', 'IncomeTaxExpenseBenefit', 'USD'),
+        -- Gains / losses on investment securities (excluded from normalized earnings)
+        ('us-gaap', 'DebtAndEquitySecuritiesGainLoss', 'USD'),
+        ('us-gaap', 'EquitySecuritiesFvNiGainLoss', 'USD'),
+        ('us-gaap', 'EquitySecuritiesFvNiUnrealizedGainLoss', 'USD'),
+        ('us-gaap', 'DebtSecuritiesGainLoss', 'USD'),
+        ('us-gaap', 'DebtSecuritiesRealizedGainLoss', 'USD'),
+        ('us-gaap', 'AvailableForSaleSecuritiesGrossRealizedGainLossNet', 'USD'),
         -- Balance Sheet
         ('us-gaap', 'Assets', 'USD'),
         ('us-gaap', 'AssetsCurrent', 'USD'),
@@ -29,9 +37,16 @@ target_tags as (
         ('us-gaap', 'LiabilitiesCurrent', 'USD'),
         ('us-gaap', 'StockholdersEquity', 'USD'),
         ('us-gaap', 'CashAndCashEquivalentsAtCarryingValue', 'USD'),
+        ('us-gaap', 'PropertyPlantAndEquipmentNet', 'USD'),
+        ('us-gaap', 'PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization', 'USD'),
         -- Cash Flow Statement
         ('us-gaap', 'NetCashProvidedByUsedInOperatingActivities', 'USD'),
         ('us-gaap', 'PaymentsToAcquirePropertyPlantAndEquipment', 'USD'),
+        -- Non-cash charges (inputs to owner earnings)
+        ('us-gaap', 'ShareBasedCompensation', 'USD'),
+        ('us-gaap', 'DepreciationDepletionAndAmortization', 'USD'),
+        ('us-gaap', 'Depreciation', 'USD'),
+        ('us-gaap', 'AmortizationOfIntangibleAssets', 'USD'),
         -- Share Counts
         ('us-gaap', 'CommonStockSharesOutstanding', 'shares'),
         ('us-gaap', 'WeightedAverageNumberOfDilutedSharesOutstanding', 'shares'),

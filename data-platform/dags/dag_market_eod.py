@@ -7,6 +7,7 @@ from airflow.operators.python import PythonOperator
 sys.path.append('/opt/airflow')
 
 from src.extractors.market_data import fetch_and_store_market_data
+from src.extractors.fundamentals import fetch_and_store_fundamentals
 from src.extractors.sec_edgar import ingest_sec_filing
 
 default_args = {
@@ -40,6 +41,10 @@ with DAG(
         count = fetch_and_store_market_data(ticker, period="5d")
         print(f"Recorded {count} rows for {ticker}")
 
+    def run_fundamentals(ticker: str):
+        count = fetch_and_store_fundamentals(ticker)
+        print(f"Recorded {count} statements for {ticker}")
+
     def run_sec_edgar(ticker: str, cik: str):
         if cik:
             ingest_sec_filing(ticker, cik)
@@ -57,7 +62,15 @@ with DAG(
             op_kwargs={"ticker": ticker},
         )
 
-        # Task 2: Ingest SEC filings if CIK is present
+        # Task 2: Ingest Yahoo Finance fundamentals (the only source for non-SEC filers)
+        fundamentals_task = PythonOperator(
+            task_id=f"ingest_fundamentals_{safe_id}",
+            python_callable=run_fundamentals,
+            op_kwargs={"ticker": ticker},
+        )
+        price_task >> fundamentals_task
+
+        # Task 3: Ingest SEC filings if CIK is present
         if cik:
             sec_task = PythonOperator(
                 task_id=f"ingest_sec_{safe_id}",

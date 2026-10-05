@@ -36,7 +36,7 @@ interface StatementRecord {
 }
 
 interface DcfDefaults {
-    base_fcf: number;
+    base_owner_earnings: number;
     growth_stage_1: number;
     terminal_growth: number;
     wacc: number;
@@ -52,7 +52,14 @@ interface MultiplesData {
     ttm_revenue: number;
     ttm_net_income: number;
     ttm_fcf: number;
+    ttm_true_owner_earnings: number;
+    p_owner_earnings_ratio: number | null;
+    fair_value_per_share: number | null;
+    margin_of_safety: number | null;
     pe_ratio: number | null;
+    eps_diluted_ttm: number | null;
+    normalized_eps_ttm: number | null;
+    normalized_pe_ratio: number | null;
     p_fcf_ratio: number | null;
     ev_sales_ratio: number | null;
     ev_ebit_ratio: number | null;
@@ -176,7 +183,7 @@ function generateSensitivityMatrix(
 export default function CompanyShow({ company, historical, dcf_defaults, saved_scenarios, multiples, peers=[], industry_benchmarks, }: Props) {
     // Interactive DCF State
     const [baseFcfBillion, setBaseFcfBillion] = useState<number>(
-        Number((dcf_defaults.base_fcf / 1e9).toFixed(2))
+        Number((dcf_defaults.base_owner_earnings / 1e9).toFixed(2))
     );
     const [growthPct, setGrowthPct] = useState<number>(dcf_defaults.growth_stage_1 * 100);
     const [terminalGrowthPct, setTerminalGrowthPct] = useState<number>(
@@ -362,15 +369,27 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
                     <Card>
                         <CardContent className="p-4">
-                            <div className="text-xs text-muted-foreground font-medium uppercase">Trailing P/E</div>
+                            <div className="text-xs text-muted-foreground font-medium uppercase">Trailing P/E (GAAP, TTM)</div>
                             <div className="text-2xl font-bold tracking-tight">
                                 {multiples.pe_ratio !== null ? `${multiples.pe_ratio}x` : 'N/A'}
                             </div>
                             <div className="text-[11px] text-muted-foreground mt-1">
                                 TTM Net Income: ${(multiples.ttm_net_income / 1e9).toFixed(2)}B
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardContent className="p-4">
+                            <div className="text-xs text-muted-foreground font-medium uppercase">Normalized EPS (TTM)</div>
+                            <div className="text-2xl font-bold tracking-tight">
+                                {multiples.normalized_eps_ttm !== null ? formatCurrency(multiples.normalized_eps_ttm) : 'N/A'}
+                            </div>
+                            <div className="text-[11px] text-muted-foreground mt-1">
+                                GAAP Diluted EPS: {multiples.eps_diluted_ttm !== null ? formatCurrency(multiples.eps_diluted_ttm) : 'N/A'}
                             </div>
                         </CardContent>
                     </Card>
@@ -506,13 +525,13 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                         <CardHeader>
                             <CardTitle>Discounted Cash Flow Assumptions</CardTitle>
                             <CardDescription>
-                                Adjust cash flow projection parameters to dynamically recalculate intrinsic value.
+                                Fair value discounts True Owner Earnings (normalized net income plus depreciation & amortization, less maintenance CapEx). Adjust the parameters to recalculate intrinsic value.
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-6">
                             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label>Base Free Cash Flow ($B)</Label>
+                                    <Label>Base True Owner Earnings, TTM ($B)</Label>
                                     <Input
                                         type="number"
                                         step="0.1"
@@ -555,7 +574,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
                             <div className="space-y-5">
                                 <div>
                                     <div className="flex justify-between text-sm">
-                                        <Label>5-Year Annual FCF Growth Rate: {growthPct}%</Label>
+                                        <Label>5-Year Annual Owner Earnings Growth Rate: {growthPct}%</Label>
                                     </div>
                                     <Slider
                                         value={[growthPct]}
@@ -624,7 +643,7 @@ export default function CompanyShow({ company, historical, dcf_defaults, saved_s
 
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-muted-foreground">PV of Explicit 5Y FCF</span>
+                                    <span className="text-muted-foreground">PV of Explicit 5Y Owner Earnings</span>
                                     <span className="font-mono font-medium">${valuation.pvExplicit.toFixed(2)}B</span>
                                 </div>
                                 <div className="flex justify-between">

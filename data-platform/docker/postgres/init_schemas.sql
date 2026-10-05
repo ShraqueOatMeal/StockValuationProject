@@ -47,3 +47,14 @@ CREATE TABLE IF NOT EXISTS bronze.raw_macro_yields (
     ingested_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_macro_yield UNIQUE (series_id, observation_date)
 );
+
+-- 5. Yahoo Finance Fundamentals (fallback for non-SEC filers and for line items missing from XBRL)
+CREATE TABLE IF NOT EXISTS bronze.raw_yf_fundamentals (
+    id BIGSERIAL PRIMARY KEY,
+    ticker VARCHAR(20) NOT NULL,
+    statement_type VARCHAR(10) NOT NULL, -- 'income', 'balance', 'cashflow'
+    frequency VARCHAR(10) NOT NULL,      -- 'quarterly', 'annual'
+    payload JSONB NOT NULL,              -- { "<period end date>": { "<line item>": value, ... }, ... }
+    ingested_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_yf_fundamentals UNIQUE (ticker, statement_type, frequency)
+);

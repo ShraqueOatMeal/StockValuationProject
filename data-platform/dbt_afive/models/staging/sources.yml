@@ -14,6 +14,13 @@ sources:
             tests:
               - not_null
 
+      - name: raw_yf_fundamentals
+        description: "Raw JSONB income statement, balance sheet and cash flow line items from Yahoo Finance."
+        columns:
+          - name: ticker
+            tests:
+              - not_null
+
       - name: raw_sec_filings
         description: "Raw JSONB XBRL company facts pulled from SEC EDGAR API."
         columns:

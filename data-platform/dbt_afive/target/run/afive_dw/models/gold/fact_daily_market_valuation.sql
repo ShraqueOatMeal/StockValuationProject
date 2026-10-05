@@ -16,6 +16,26 @@ financials as (
     select * from "afive_dw"."gold"."fact_quarterly_financials"
 ),
 
+-- Base-case DCF assumptions (dbt vars). With constant growth the model collapses to a
+-- single multiple of the base-year cash flow:
+--   sum over years 1-5 of ((1+g)/(1+r))^t  +  ((1+g)/(1+r))^5 * (1+g_term) / (r - g_term)
+dcf_assumptions as (
+    select
+        a.*,
+        (
+            select sum(power((1 + a.growth_stage_1) / (1 + a.discount_rate), t))
+            from generate_series(1, 5) as t
+        )
+        + power((1 + a.growth_stage_1) / (1 + a.discount_rate), 5)
+            * (1 + a.terminal_growth) / (a.discount_rate - a.terminal_growth) as dcf_multiple
+    from (
+        select
+            0.1::numeric as growth_stage_1,
+            0.025::numeric as terminal_growth,
+            0.085::numeric as discount_rate
+    ) a
+),
+
 joined as (
     select
         -- Daily Surrogate Key
@@ -55,7 +75,14 @@ joined as (
         f.ttm_revenue,
         f.ttm_operating_income,
         f.ttm_net_income,
+        f.ttm_normalized_net_income,
+
+        -- TTM Earnings Per Share on the latest diluted share count, so a stock split
+        -- inside the trailing window can't mix pre- and post-split per-share figures
+        round(f.ttm_net_income / nullif(f.diluted_shares, 0), 2) as eps_diluted_ttm,
+        round(f.ttm_normalized_net_income / nullif(f.diluted_shares, 0), 2) as normalized_eps_ttm,
         f.ttm_fcf,
+        f.ttm_true_owner_earnings,
 
         -- Enterprise Value (Market Cap + Debt - Cash)
         round(
@@ -67,6 +94,7 @@ joined as (
 
         -- Valuation Multiples
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_net_income, 0), 2) as pe_ratio,
+        round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_normalized_net_income, 0), 2) as normalized_pe_ratio,
         round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_fcf, 0), 2) as p_fcf_ratio,
         round(
             ((p.close_price * coalesce(f.shares_outstanding, 1e9)) + coalesce(f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)) 
@@ -79,10 +107,29 @@ joined as (
             2
         ) as ev_ebit_ratio,
 
+        round((p.close_price * coalesce(f.shares_outstanding, 1e9)) / nullif(f.ttm_true_owner_earnings, 0), 2) as p_owner_earnings_ratio,
+
+        -- Fair Value: 5-year DCF of TTM True Owner Earnings plus a Gordon Growth terminal
+        -- value, less net debt. NULL when owner earnings are not positive or the real
+        -- share count is unknown.
+        d.growth_stage_1 as dcf_growth_stage_1,
+        d.terminal_growth as dcf_terminal_growth,
+        d.discount_rate as dcf_discount_rate,
+        case
+            when f.ttm_true_owner_earnings > 0 and f.shares_outstanding > 0
+            then round(
+                (f.ttm_true_owner_earnings * d.dcf_multiple
+                    - (coalesce(f.total_liabilities, 0) - coalesce(f.cash_and_cash_equivalents, 0)))
+                / f.shares_outstanding,
+                2
+            )
+        end as dcf_equity_value_per_share,
+
         -- Price-to-Performance indicators (Relative Yield)
         round(p.dividend_amount / nullif(p.adj_close, 0), 6) as daily_dividend_yield,
         current_timestamp as calculated_at
     from prices p
+    cross join dcf_assumptions d
     left join lateral (
         select *
         from financials f
@@ -93,6 +140,16 @@ joined as (
     ) f on true
 )
 
-select * from joined
+select
+    j.*,
+    -- A model value at or below zero means net debt exceeds the value of the cash flows
+    -- (typical for banks, whose liabilities are deposits), so no fair value is reported
+    case when dcf_equity_value_per_share > 0 then dcf_equity_value_per_share end as fair_value_per_share,
+    -- Margin of Safety: discount of the market price to fair value
+    case
+        when dcf_equity_value_per_share > 0
+        then round((dcf_equity_value_per_share - close_price) / dcf_equity_value_per_share, 4)
+    end as margin_of_safety
+from joined j
   );
   

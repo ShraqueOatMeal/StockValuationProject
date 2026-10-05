@@ -226,6 +226,36 @@ export function FinancialStatementsTable({ statements, currency }: Props) {
                                             </td>
                                         ))}
                                     </tr>
+                                    <tr className="font-semibold border-t-2">
+                                        <td className="p-3 font-sans">Normalized Net Income</td>
+                                        {periods.map((p) => (
+                                            <td key={p.period} className="p-3 text-right">{fmt(p.normalized_net_income)}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="p-3 font-sans pl-6">Depreciation & Amortization</td>
+                                        {periods.map((p) => (
+                                            <td key={p.period} className="p-3 text-right">{fmt(p.depreciation_and_amortization)}</td>
+                                        ))}
+                                    </tr>
+                                    <tr>
+                                        <td className="p-3 font-sans pl-6">Maintenance CapEx (~ estimated)</td>
+                                        {periods.map((p) => (
+                                            <td key={p.period} className="p-3 text-right text-rose-600 dark:text-rose-400">
+                                                {p.maintenance_capex !== null
+                                                    ? `${p.maintenance_capex_is_estimated ? '~' : ''}-${fmt(p.maintenance_capex)}`
+                                                    : '—'}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                    <tr className="font-bold border-t-2 bg-neutral-50/50 dark:bg-neutral-900/40">
+                                        <td className="p-3 font-sans text-primary">True Owner Earnings</td>
+                                        {periods.map((p) => (
+                                            <td key={p.period} className="p-3 text-right text-primary font-bold">
+                                                {fmt(p.true_owner_earnings)}
+                                            </td>
+                                        ))}
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

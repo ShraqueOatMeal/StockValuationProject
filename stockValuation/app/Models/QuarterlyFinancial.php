@@ -21,6 +21,7 @@ class QuarterlyFinancial extends Model
         'net_income' => 'decimal:2',
         'gross_profit' => 'decimal:2',
         'free_cash_flow' => 'decimal:2',
+        'true_owner_earnings' => 'decimal:2',
         'gross_margin' => 'float',
         'operating_margin' => 'float',
         'net_margin' => 'float',
