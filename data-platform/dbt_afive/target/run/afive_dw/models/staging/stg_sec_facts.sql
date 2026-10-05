@@ -1,9 +1,14 @@
-with raw_filings as (
+
+  create view "afive_dw"."bronze"."stg_sec_facts__dbt_tmp"
+    
+    
+  as (
+    with raw_filings as (
     select
         ticker,
         cik,
         payload
-    from {{ source('bronze', 'raw_sec_filings') }}
+    from "afive_dw"."bronze"."raw_sec_filings"
     where form_type = 'FACTS'
 ),
 
@@ -72,3 +77,4 @@ parsed as (
 )
 
 select distinct * from parsed
+  );

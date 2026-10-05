@@ -17,6 +17,9 @@ def fetch_and_store_market_data(ticker: str, period: str = "1mo") -> int:
     stock = yf.Ticker(ticker)
     df = stock.history(period=period, auto_adjust=False)
 
+    # Yahoo returns NaN rows for halted / not-yet-settled sessions
+    df = df.dropna(subset=['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume'])
+
     if df.empty:
         print(f"No records returned for {ticker}")
         return 0
@@ -34,9 +37,12 @@ def fetch_and_store_market_data(ticker: str, period: str = "1mo") -> int:
             float(row['Adj Close']),
             int(row['Volume']),
             float(row.get('Dividends', 0.0)),
-            float(row.get('Stock Splits', 1.0))
+            # Yahoo reports 0.0 on days without a split; a neutral coefficient is 1.0
+            float(row.get('Stock Splits', 0.0)) or 1.0
         ))
 
+    # Update every price column on conflict: Yahoo restates OHLC after splits, and a row
+    # first captured mid-session must be overwritten by the final end-of-day bar.
     insert_sql = """
     INSERT INTO bronze.raw_market_prices (
         ticker, trade_date, open_price, high_price, low_price,
@@ -44,6 +50,10 @@ def fetch_and_store_market_data(ticker: str, period: str = "1mo") -> int:
     ) VALUES %s
     ON CONFLICT (ticker, trade_date)
     DO UPDATE SET
+        open_price = EXCLUDED.open_price,
+        high_price = EXCLUDED.high_price,
+        low_price = EXCLUDED.low_price,
+        close_price = EXCLUDED.close_price,
         adj_close = EXCLUDED.adj_close,
         volume = EXCLUDED.volume,
         dividend_amount = EXCLUDED.dividend_amount,
@@ -52,14 +62,14 @@ def fetch_and_store_market_data(ticker: str, period: str = "1mo") -> int:
     """
 
     conn = get_db_connection()
-    cursor = conn.cursor()
-    execute_values(cursor, insert_sql, records)
-    conn.commit()
-    
+    try:
+        with conn.cursor() as cursor:
+            execute_values(cursor, insert_sql, records)
+        conn.commit()
+    finally:
+        conn.close()
+
     row_count = len(records)
-    cursor.close()
-    conn.close()
-    
     print(f"Successfully upserted {row_count} rows for {ticker}")
     return row_count
 

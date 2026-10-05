@@ -1,5 +1,10 @@
-with raw_data as (
-    select * from {{ source('bronze', 'raw_market_prices') }}
+
+  create view "afive_dw"."bronze"."stg_market_prices__dbt_tmp"
+    
+    
+  as (
+    with raw_data as (
+    select * from "afive_dw"."bronze"."raw_market_prices"
 ),
 
 cleaned as (
@@ -20,3 +25,4 @@ cleaned as (
 )
 
 select * from cleaned
+  );
