@@ -1,6 +1,32 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key=['ticker', 'trade_date'],
+        incremental_strategy='delete+insert',
+        on_schema_change='sync_all_columns'
+    )
+}}
+
 with prices as (
     select * from {{ ref('silver_market_prices') }}
 ),
+
+{% if is_incremental() %}
+-- Dates to recalculate: from the earliest price re-ingested since the last run, and at
+-- least the trailing lookback window so a newly filed quarter reaches recent dates.
+-- Restated history and changed assumptions need a full refresh (run weekly).
+refresh_window as (
+    select
+        least(
+            (
+                select min(trade_date)
+                from prices
+                where updated_at > (select coalesce(max(calculated_at), '1900-01-01') from {{ this }})
+            ),
+            (select max(trade_date) from {{ this }}) - {{ var('incremental_lookback_days') }}
+        ) as from_date
+),
+{% endif %}
 
 financials as (
     select * from {{ ref('fact_quarterly_financials') }}
@@ -188,6 +214,9 @@ joined as (
         order by f.filing_date desc, f.period_end_date desc
         limit 1
     ) f on true
+    {% if is_incremental() %}
+    where p.trade_date >= (select from_date from refresh_window)
+    {% endif %}
 )
 
 select

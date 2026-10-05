@@ -1,4 +1,5 @@
 
+      
   
     
 
@@ -8,9 +9,13 @@
     as
   
   (
-    with prices as (
+    
+
+with prices as (
     select * from "afive_dw"."silver"."silver_market_prices"
 ),
+
+
 
 financials as (
     select * from "afive_dw"."gold"."fact_quarterly_financials"
@@ -198,6 +203,7 @@ joined as (
         order by f.filing_date desc, f.period_end_date desc
         limit 1
     ) f on true
+    
 )
 
 select
@@ -215,4 +221,5 @@ select
     end as franchise_margin_of_safety
 from joined j
   );
+  
   

@@ -1,4 +1,5 @@
 
+      
   
     
 
@@ -8,9 +9,13 @@
     as
   
   (
-    with staged as (
+    
+
+with staged as (
     select * from "afive_dw"."bronze"."stg_market_prices"
 ),
+
+
 
 enriched as (
     select
@@ -45,8 +50,11 @@ enriched as (
         ), 4) as sma_50,
         ingested_at as updated_at
     from staged
+    
 )
 
 select * from enriched
+
   );
+  
   

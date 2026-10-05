@@ -22,7 +22,8 @@ Everything lives in one PostgreSQL database (`afive_dw`). The warehouse owns the
 
 ```
 data-platform/
-  dags/dag_market_eod.py        Airflow DAG: daily price + SEC ingestion (Mon–Fri 22:00 UTC)
+  dags/dag_market_eod.py        Airflow DAGs: daily ingestion + incremental dbt (Mon–Fri 22:00 UTC),
+                                weekly price re-pull + full dbt rebuild (Sun 03:00 UTC)
   src/extractors/               market_data.py and fundamentals.py (Yahoo Finance), sec_edgar.py (SEC EDGAR)
   src/common/db.py              PostgreSQL connection helper
   dbt_afive/                    dbt project (staging / silver / gold models)
@@ -117,7 +118,7 @@ uv run python src/extractors/market_data.py   # last month of prices
 uv run python src/extractors/fundamentals.py  # Yahoo Finance statements
 ```
 
-The DAG fetches the last five trading days on each run, so use the script (or call `fetch_and_store_market_data(ticker, period="5y")`) to load price history for a new ticker.
+On each run the daily DAG loads prices from the last stored trade date onward (with a 7-day overlap), so a new ticker gets one year of history automatically and a gap left by downtime fills itself.
 
 To add a company, append it to `WATCHLIST` in `dags/dag_market_eod.py`. Use `"cik": None` for tickers that do not file with the SEC.
 
@@ -132,7 +133,20 @@ uv run dbt run --profiles-dir .
 uv run dbt test --profiles-dir .
 ```
 
-The DAG only loads bronze, so re-run dbt after each ingestion to refresh the silver and gold tables.
+Both DAGs finish with `dbt build`, so the silver and gold tables refresh without a manual step. Run dbt by hand only after changing a model, and add `--full-refresh` when you do: the two price models are incremental and will not recalculate history on their own.
+
+### Orchestration and refresh windows
+
+| | Daily (`dag_market_eod`) | Weekly (`dag_weekly_full_refresh`) |
+| --- | --- | --- |
+| Schedule | Mon–Fri 22:00 UTC | Sunday 03:00 UTC |
+| Prices fetched | From the last stored trade date, less 7 days; one year for a ticker with no history | The full one-year window, because Yahoo restates adjusted closes after dividends and splits |
+| Fundamentals and SEC | Fetched | Not fetched |
+| dbt | `dbt build`: price models reprocess only newly ingested dates plus a trailing 10 days | `dbt build --full-refresh`: every model rebuilt from scratch |
+
+`silver_market_prices` and `fact_daily_market_valuation` are incremental. The financial statement models are small and are rebuilt in full on every run. The windows are set by `PRICE_BACKFILL_PERIOD` and `PRICE_LOOKBACK_DAYS` in the DAG file and `incremental_lookback_days` in `dbt_project.yml`.
+
+dbt runs inside the Airflow containers from its own virtual environment, with `dbt_afive/` mounted into them. After pulling these changes, rebuild the image once: `docker compose build && docker compose up -d`.
 
 ### 4. Run the web app
 

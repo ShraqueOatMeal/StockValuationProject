@@ -10,6 +10,10 @@ macro-paths: ["macros"]
 
 # Base-case assumptions for the two DCF models in fact_daily_market_valuation
 vars:
+  # Incremental models always reprocess this many trailing days, on top of any dates
+  # whose prices were re-ingested since the last run
+  incremental_lookback_days: 10
+
   # Conservative: 10 years of growth in two stages on True Owner Earnings
   dcf_growth_stage_1: 0.10     # annual owner earnings growth, years 1-5
   dcf_growth_stage_2: 0.07     # annual owner earnings growth, years 6-10

@@ -1,6 +1,26 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key=['ticker', 'trade_date'],
+        incremental_strategy='delete+insert',
+        on_schema_change='sync_all_columns'
+    )
+}}
+
 with staged as (
     select * from {{ ref('stg_market_prices') }}
 ),
+
+{% if is_incremental() %}
+-- Earliest trade date ingested since the last run. Everything from that date onwards is
+-- recalculated, because returns and moving averages depend on the rows before them; a
+-- backfill of old history therefore widens the window on its own.
+changed as (
+    select min(trade_date) as from_date
+    from staged
+    where ingested_at > (select coalesce(max(updated_at), '1900-01-01') from {{ this }})
+),
+{% endif %}
 
 enriched as (
     select
@@ -35,6 +55,13 @@ enriched as (
         ), 4) as sma_50,
         ingested_at as updated_at
     from staged
+    {% if is_incremental() %}
+    -- 100 calendar days of earlier history so the 50-day average is complete at the cutoff
+    where trade_date >= (select from_date from changed) - 100
+    {% endif %}
 )
 
 select * from enriched
+{% if is_incremental() %}
+where trade_date >= (select from_date from changed)
+{% endif %}
