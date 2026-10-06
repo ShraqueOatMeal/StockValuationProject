@@ -10,13 +10,14 @@ The watchlist currently covers Alphabet (`GOOGL`), ServiceNow (`NOW`) and Malaya
 ## Architecture
 
 ```
-Yahoo Finance ──┐                                             ┌── Dashboard
-                ├─► bronze ──► staging ──► silver ──► gold ──►│   Company page (statements, peers, DCF)
-SEC EDGAR ──────┘   (raw)      (views)     (tables)  (marts)  └── Saved DCF scenarios
-   Airflow DAG          └────────── dbt ──────────┘               Laravel + React
+Yahoo Finance ──┐                                             ┌── Laravel + React
+                ├─► bronze ──► staging ──► silver ──► gold ──►│   dashboard, company page, DCF models, saved scenarios
+SEC EDGAR ──────┘   (raw)      (views)     (tables)  (marts)  │
+   Airflow DAG          └────────── dbt ──────────┘           └── Superset (read-only role)
+                                                                  exploratory dashboards, pipeline health
 ```
 
-Everything lives in one PostgreSQL database (`afive_dw`). The warehouse owns the `bronze`, `silver` and `gold` schemas; the Laravel app keeps its own tables (users, sessions, `user_dcf_scenarios`) in `public` and reads `gold` as read-only models.
+The warehouse lives in one PostgreSQL database (`afive_dw`). It owns the `bronze`, `silver` and `gold` schemas, plus `ops` for pipeline monitoring. The Laravel app keeps its own tables (users, sessions, `user_dcf_scenarios`) in `public` and reads `gold` as read-only models. Superset reads `gold`, `silver` and `ops` through a read-only role and keeps its own metadata in a separate `superset` database on the same server.
 
 ## Repository layout
 
@@ -26,9 +27,9 @@ data-platform/
                                 weekly price re-pull + full dbt rebuild (Sun 03:00 UTC)
   src/extractors/               market_data.py and fundamentals.py (Yahoo Finance), sec_edgar.py (SEC EDGAR)
   src/common/db.py              PostgreSQL connection helper
-  dbt_afive/                    dbt project (staging / silver / gold models)
-  docker/postgres/              Schema and bronze table DDL, run on first database start
-  docker/superset/              Superset image, config and dataset bootstrap script
+  dbt_afive/                    dbt project (staging / silver / gold / ops models, tests)
+  docker/postgres/              Schema and bronze table DDL, run on first database start; Superset roles script
+  docker/superset/              Superset image, config, and the scripts that register datasets and seed dashboards
   docker-compose.yml            PostgreSQL, Redis, Airflow webserver + scheduler, Superset
 stockValuation/
   app/Http/Controllers/         ValuationDashboardController, CompanyValuationController
@@ -191,7 +192,16 @@ The app is then available at <http://localhost:8000>.
 
 ### 5. Exploratory analytics (Superset)
 
-Apache Superset runs alongside the app for ad-hoc charts and dashboards over the gold tables. It queries the warehouse through a read-only role and keeps its own metadata in a separate `superset` database. The design and the dashboards to build are in [`docs/superset-proposal.md`](docs/superset-proposal.md).
+Apache Superset runs alongside the app for ad-hoc charts and dashboards over the gold tables. The two tools have different jobs:
+
+| Laravel + React | Superset |
+| --- | --- |
+| Anything that depends on user input: the DCF models, the maintenance CapEx slider, saved scenarios | Exploration: trends over time, screening across companies, pipeline health |
+| A new view needs a controller query, a TypeScript interface and a chart component | A new chart is a few clicks on an existing dataset |
+
+One rule carries over from the rest of the project: **all metric logic lives in dbt.** Superset charts columns that already exist and defines no formulas of its own, so a figure means the same thing in the app, in Superset and in a direct query.
+
+Superset connects as `afive_readonly`, which can read `gold`, `silver` and `ops` only and has a 15-second statement timeout, so an exploratory query cannot hold up Airflow or the web app.
 
 Add these to `data-platform/.env` (any long random strings):
 
@@ -219,7 +229,14 @@ Everything runs inside Docker. Three one-shot services do the setup and then exi
 
 The dashboards are defined in `docker/superset/bootstrap_dashboards.py`. Once created they are left alone, so edits made in the Superset UI survive restarts; run `SUPERSET_REBUILD_DASHBOARDS=1 docker compose up superset-bootstrap` to rebuild them from the file, which discards UI edits to those four. Give it a slug instead of `1` (for example `SUPERSET_REBUILD_DASHBOARDS=pipeline-health`) to rebuild just one.
 
-Superset is then at <http://localhost:8088>, reachable from this machine only; sign in with the admin user from `.env`. The web app's sidebar links to it. All metric formulas stay in dbt: Superset charts existing columns and defines none of its own.
+Superset is then at <http://localhost:8088>, reachable from this machine only; sign in with the admin user from `.env`. The web app's sidebar links to it.
+
+Dashboards live in Superset's own database, so deleting the Postgres volume deletes any you built by hand. Export those from Superset (Settings → Export) and commit the files; the four starter dashboards can always be rebuilt from the script.
+
+**Not built, on purpose:**
+
+- **Embedding dashboards inside the Laravel app.** Superset supports this with guest tokens, but the app's valuation routes have no login yet, so a token would protect nothing, and an embedded dashboard is view-only. If it becomes worthwhile: put the routes behind login, turn on the embedding settings that are sketched (commented out) in `superset_config.py`, issue tokens from a Laravel endpoint using a dedicated Superset service account, and limit framing and CORS to the app's address.
+- **Cross-sectional dashboards** (P/E against growth, multiple distributions by industry, premium to industry). With three companies in three industries they would show nothing. `mart_valuation_screener` already carries the columns they need once the watchlist reaches roughly twenty companies.
 
 ## Development
 
