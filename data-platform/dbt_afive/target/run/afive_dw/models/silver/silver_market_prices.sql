@@ -1,60 +1,16 @@
 
       
-  
+        delete from "afive_dw"."silver"."silver_market_prices" as DBT_INTERNAL_DEST
+        where (ticker, trade_date) in (
+            select distinct ticker, trade_date
+            from "silver_market_prices__dbt_tmp103810530051" as DBT_INTERNAL_SOURCE
+        );
+
     
 
-  create  table "afive_dw"."silver"."silver_market_prices__dbt_tmp"
-  
-  
-    as
-  
-  (
-    
-
-with staged as (
-    select * from "afive_dw"."bronze"."stg_market_prices"
-),
-
-
-
-enriched as (
-    select
-        ticker,
-        trade_date,
-        open_price,
-        high_price,
-        low_price,
-        close_price,
-        adj_close,
-        volume,
-        dividend_amount,
-        split_coefficient,
-        -- Daily percentage change in adjusted close
-        round(
-            (adj_close - lag(adj_close) over (partition by ticker order by trade_date)) 
-            / nullif(lag(adj_close) over (partition by ticker order by trade_date), 0),
-            6
-        ) as daily_return,
-        -- Liquidity metric: Traded Dollar Volume
-        round(close_price * volume, 2) as dollar_volume,
-        -- 20-Day and 50-Day Simple Moving Averages
-        round(avg(adj_close) over (
-            partition by ticker 
-            order by trade_date 
-            rows between 19 preceding and current row
-        ), 4) as sma_20,
-        round(avg(adj_close) over (
-            partition by ticker 
-            order by trade_date 
-            rows between 49 preceding and current row
-        ), 4) as sma_50,
-        ingested_at as updated_at
-    from staged
-    
-)
-
-select * from enriched
-
-  );
-  
+    insert into "afive_dw"."silver"."silver_market_prices" ("ticker", "trade_date", "open_price", "high_price", "low_price", "close_price", "adj_close", "volume", "dividend_amount", "split_coefficient", "daily_return", "dollar_volume", "sma_20", "sma_50", "updated_at")
+    (
+        select "ticker", "trade_date", "open_price", "high_price", "low_price", "close_price", "adj_close", "volume", "dividend_amount", "split_coefficient", "daily_return", "dollar_volume", "sma_20", "sma_50", "updated_at"
+        from "silver_market_prices__dbt_tmp103810530051"
+    )
   

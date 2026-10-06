@@ -69,7 +69,7 @@ mapped as (
 ),
 
 -- One value per metric and reporting period: latest filed version wins, tag priority breaks ties
-current_facts as (
+latest_facts as (
     select distinct on (ticker, metric, period_end_date, period_start_date)
         ticker,
         cik,
@@ -77,11 +77,37 @@ current_facts as (
         period_start_date,
         period_end_date,
         amount,
+        valid_from as filed_date,
         -- Duration in days (NULL for balance sheet instants)
         period_end_date - period_start_date as duration_days
     from mapped
     where is_current = true
     order by ticker, metric, period_end_date, period_start_date, valid_from desc, tag_priority
+),
+
+-- Share counts are put on today's share basis. A filing made after a split already shows
+-- adjusted figures, including its prior-period comparatives, so a count only needs the
+-- splits that took effect after the filing it was last reported in.
+current_facts as (
+    select
+        f.ticker,
+        f.cik,
+        f.metric,
+        f.period_start_date,
+        f.period_end_date,
+        case
+            when f.metric in ('shares_balance_sheet', 'shares_cover_page', 'shares_diluted_avg')
+            then f.amount * coalesce(s.later_split_factor, 1)
+            else f.amount
+        end as amount,
+        f.duration_days
+    from latest_facts f
+    left join lateral (
+        select exp(sum(ln(sp.split_ratio)))::numeric as later_split_factor
+        from {{ ref('stg_stock_splits') }} sp
+        where sp.ticker = f.ticker
+          and sp.split_date > f.filed_date
+    ) s on true
 ),
 
 flows as (
@@ -582,6 +608,16 @@ ratios as (
     round(net_income / nullif(stockholders_equity, 0), 4) as return_on_equity,
     round(total_liabilities / nullif(stockholders_equity, 0), 4) as debt_to_equity,
     round(current_assets / nullif(current_liabilities, 0), 4) as current_ratio,
+
+    -- DuPont decomposition of quarterly ROE: net margin x asset turnover x equity multiplier
+    round(total_revenue / nullif(total_assets, 0), 4) as asset_turnover,
+    round(total_assets / nullif(stockholders_equity, 0), 4) as equity_multiplier,
+
+    -- Sloan accruals ratio: earnings not backed by operating cash flow, scaled by assets.
+    -- The normalized variant leaves out investment gains, which are non-cash by nature
+    -- and would otherwise read as aggressive accounting.
+    round((net_income - operating_cash_flow) / nullif(total_assets, 0), 4) as accruals_ratio,
+    round((normalized_net_income - operating_cash_flow) / nullif(total_assets, 0), 4) as normalized_accruals_ratio,
     current_timestamp as computed_at
   from normalized
 ),

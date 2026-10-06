@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
-import AppLayout from '@/layouts/app-layout';
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, setLayoutProps } from '@inertiajs/react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -405,8 +404,11 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
         { title: company.ticker, href: `/companies/${company.ticker}` },
     ];
 
+    // AppLayout is applied to every page in app.tsx; wrapping again nests two shells
+    setLayoutProps({ breadcrumbs });
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title={`${company.ticker} — Valuation Deep Dive`} />
 
             <div className="flex h-full flex-1 flex-col gap-6 p-4">
@@ -988,6 +990,6 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
                 </div>
                 <FinancialStatementsTable statements={historical} currency={company.currency} />
             </div>
-        </AppLayout>
+        </>
     );
 }

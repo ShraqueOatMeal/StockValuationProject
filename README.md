@@ -28,7 +28,8 @@ data-platform/
   src/common/db.py              PostgreSQL connection helper
   dbt_afive/                    dbt project (staging / silver / gold models)
   docker/postgres/              Schema and bronze table DDL, run on first database start
-  docker-compose.yml            PostgreSQL, Redis, Airflow webserver + scheduler
+  docker/superset/              Superset image, config and dataset bootstrap script
+  docker-compose.yml            PostgreSQL, Redis, Airflow webserver + scheduler, Superset
 stockValuation/
   app/Http/Controllers/         ValuationDashboardController, CompanyValuationController
   app/Models/                   Company, QuarterlyFinancial, DailyMarketValuation, UserDcfScenario
@@ -40,7 +41,7 @@ stockValuation/
 | Layer | Object | What it holds |
 | --- | --- | --- |
 | bronze | `raw_market_prices` | Daily OHLCV, adjusted close, dividends and splits per ticker |
-| bronze | `raw_yf_fundamentals` | One JSONB row per ticker, statement (income, balance, cash flow) and frequency (quarterly, annual) from Yahoo Finance |
+| bronze | `raw_yf_fundamentals` | One JSONB row per ticker, statement (income, balance, cash flow) and frequency (quarterly, annual) from Yahoo Finance, plus one row each for the company profile and the stock split history |
 | bronze | `raw_sec_filings` | One JSONB row per company and payload type: `FACTS` (XBRL company facts) and `ENTITY` (SIC code, industry, exchanges) |
 | staging | `stg_market_prices`, `stg_sec_facts`, `stg_yf_fundamentals` | Typed views over bronze; `stg_sec_facts` unnests the selected XBRL tags into one row per reported fact, `stg_yf_fundamentals` one row per line item and period |
 | silver | `silver_market_prices` | Prices with daily return, dollar volume and 20/50-day moving averages |
@@ -48,12 +49,15 @@ stockValuation/
 | gold | `dim_company` | Ticker, name, currency, exchange and industry (SEC entity data, then the Yahoo Finance profile) |
 | gold | `fact_quarterly_financials` | One row per company and quarter: income statement, balance sheet and cash flow items, margins, TTM sums and YoY growth |
 | gold | `fact_daily_market_valuation` | Daily price joined to the latest financials filed on or before that date: market cap, enterprise value, P/E, P/FCF, EV/Sales, EV/EBIT, base-case fair value and margin of safety |
-| gold | `agg_industry_benchmarks` | Median multiples per industry |
+| gold | `agg_industry_benchmarks` | Median multiples per industry, from each company's latest valuation |
+| gold | `mart_valuation_screener` | One row per company: latest multiples, yields, growth, quality, fair values and premium to industry |
+| ops | `obs_filing_coverage`, `obs_restatements` | Pipeline monitoring, kept outside the three data layers: missing quarters and filing lag, and facts whose value changed between filings |
 
 Notes on `fact_quarterly_financials`:
 
 - Quarterly flows are the directly reported three-month figure where one exists, otherwise year-to-date minus the previous year-to-date. This is how Q4 and cash flow items are derived, since 10-Ks report only the full year and 10-Qs report cash flows year-to-date.
 - SEC data is the primary source. Yahoo Finance fills line items the XBRL data lacks and supplies whole quarters for companies with no SEC filings; `data_source` says which. Yahoo Finance has no filing dates, so those quarters are assumed public 60 days after the period end.
+- Share counts are on today's share basis. A count is multiplied by every split that took effect after the filing it was last reported in (`stg_stock_splits`, from Yahoo Finance); filings made after a split already show adjusted figures.
 - `fiscal_year` and `fiscal_period` are the calendar year and quarter of the period end date.
 - `filing_date` is the first filing that reported the period, which keeps the join in `fact_daily_market_valuation` point-in-time.
 - `normalized_net_income` is GAAP net income less after-tax gains (plus losses) on investment securities, taxed at the trailing effective rate (kept within 0–35%). Interest and other non-operating income stay in. `normalized_eps` and `eps_diluted` divide normalized and GAAP net income by diluted shares.
@@ -142,7 +146,13 @@ Both DAGs finish with `dbt build`, so the silver and gold tables refresh without
 | Schedule | Mon–Fri 22:00 UTC | Sunday 03:00 UTC |
 | Prices fetched | From the last stored trade date, less 7 days; one year for a ticker with no history | The full one-year window, because Yahoo restates adjusted closes after dividends and splits |
 | Fundamentals and SEC | Fetched | Not fetched |
-| dbt | `dbt build`: price models reprocess only newly ingested dates plus a trailing 10 days | `dbt build --full-refresh`: every model rebuilt from scratch |
+| dbt | `dbt source freshness`, then `dbt build`: price models reprocess only newly ingested dates plus a trailing 10 days | `dbt source freshness`, then `dbt build --full-refresh`: every model rebuilt from scratch |
+
+Three checks can fail a run before or while the models build:
+
+- **Source freshness** (`sources.yml`): warns when a raw table has not been loaded for 4 days and fails at 7. Loads run on weekdays, so a normal weekend gap is about three days.
+- **`assert_every_ticker_loaded_recently`**: fails when any single ticker's prices have not loaded for 7 days, which table-level freshness would miss.
+- **`assert_no_missing_quarters`**: fails when a company has a gap in its quarterly history.
 
 `silver_market_prices` and `fact_daily_market_valuation` are incremental. The financial statement models are small and are rebuilt in full on every run. The windows are set by `PRICE_BACKFILL_PERIOD` and `PRICE_LOOKBACK_DAYS` in the DAG file and `incremental_lookback_days` in `dbt_project.yml`.
 
@@ -179,6 +189,38 @@ The app is then available at <http://localhost:8000>.
 | `/companies/{ticker}` | Financial statements, peer comparison, valuation multiples and the DCF model |
 | `POST /companies/{ticker}/scenarios` | Save a DCF scenario (base FCF, growth, terminal growth, WACC) |
 
+### 5. Exploratory analytics (Superset)
+
+Apache Superset runs alongside the app for ad-hoc charts and dashboards over the gold tables. It queries the warehouse through a read-only role and keeps its own metadata in a separate `superset` database. The design and the dashboards to build are in [`docs/superset-proposal.md`](docs/superset-proposal.md).
+
+Add these to `data-platform/.env` (any long random strings):
+
+```dotenv
+SUPERSET_SECRET_KEY=<random>
+SUPERSET_DB_PASSWORD=<random>
+WAREHOUSE_READONLY_PASSWORD=<random>
+SUPERSET_ADMIN_USER=admin
+SUPERSET_ADMIN_PASSWORD=<random>
+```
+
+```bash
+cd data-platform
+docker compose up -d --build
+```
+
+Everything runs inside Docker. Three one-shot services do the setup and then exit: `superset-db-init` creates the `superset` database and the read-only role and resets their passwords to match `.env`, `superset-init` migrates Superset's metadata and creates the admin user, and `superset-bootstrap` registers the gold tables as datasets and seeds four starter dashboards. They run on every `up`, so changing a password in `.env` only needs another `docker compose up -d`.
+
+| Dashboard | What it shows |
+| --- | --- |
+| Quality of Earnings | Net income against operating cash flow, accruals, CapEx against depreciation, owner earnings and the DuPont breakdown, for one company at a time |
+| Valuation Over Time | Price against both fair values, margin of safety and P/E, for one company at a time |
+| Screener | Every company side by side: fair values, multiples, yields, growth |
+| Pipeline Health | Quarters held, missing quarters, filing lag and restatements |
+
+The dashboards are defined in `docker/superset/bootstrap_dashboards.py`. Once created they are left alone, so edits made in the Superset UI survive restarts; run `SUPERSET_REBUILD_DASHBOARDS=1 docker compose up superset-bootstrap` to rebuild them from the file, which discards UI edits to those four. Give it a slug instead of `1` (for example `SUPERSET_REBUILD_DASHBOARDS=pipeline-health`) to rebuild just one.
+
+Superset is then at <http://localhost:8088>, reachable from this machine only; sign in with the admin user from `.env`. The web app's sidebar links to it. All metric formulas stay in dbt: Superset charts existing columns and defines none of its own.
+
 ## Development
 
 ```bash
@@ -190,11 +232,10 @@ npm run types:check     # TypeScript
 
 ## Known limitations
 
-- Historical share counts are not adjusted for stock splits, so `shares_outstanding` jumps around a split date. The latest quarters, which drive the current valuation, are unaffected.
+- Share counts from Yahoo Finance (used only where SEC has none) are taken as already split-adjusted.
 - Enterprise value and the EV multiples use `total_debt` (Yahoo Finance, then XBRL debt tags). Older quarters with neither fall back to total liabilities.
 - Maintenance CapEx is never reported, so it is estimated. The gold tables carry two estimates as a share of trailing CapEx: `maintenance_capex_share` (D&A proxy, the default) and `greenwald_maintenance_capex_share` (CapEx less the plant needed for the year's sales growth). The company page shows both as markers on a slider.
 - Both DCF models default to maintenance CapEx roughly equal to D&A. If more of a company's CapEx is really needed to sustain its earnings, its owner earnings and fair value are overstated.
 - Banks such as 1155.KL report no gross profit, current assets, current liabilities or operating income. The first three stay empty; pre-tax profit stands in for operating income. An owner earnings DCF is also a rough fit for a bank, so treat its fair value with caution.
 - Yahoo Finance serves only the latest five quarters and four fiscal years. The extractor keeps periods it has already stored, so history accumulates from the first run onward.
 - `docker/postgres/init_schemas.sql` only runs when the database volume is first created. On an existing database, run the `raw_yf_fundamentals` statement from that file by hand.
-- `agg_industry_benchmarks` only includes tickers that traded on the most recent date in the price table.

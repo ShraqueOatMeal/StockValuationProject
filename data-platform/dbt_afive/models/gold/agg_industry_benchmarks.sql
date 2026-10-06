@@ -1,3 +1,11 @@
+-- Each company's most recent valuation row. Tickers trade on different calendars, so the
+-- latest date is taken per ticker rather than across the whole table.
+with latest_valuation as (
+    select distinct on (ticker) *
+    from {{ ref('fact_daily_market_valuation') }}
+    order by ticker, trade_date desc
+)
+
 select
     c.industry,
     count(distinct v.ticker) as peer_count,
@@ -5,7 +13,6 @@ select
     percentile_cont(0.5) within group (order by v.p_fcf_ratio) as median_p_fcf,
     percentile_cont(0.5) within group (order by v.ev_sales_ratio) as median_ev_sales,
     percentile_cont(0.5) within group (order by v.ev_ebit_ratio) as median_ev_ebit
-from {{ ref('fact_daily_market_valuation') }} v
+from latest_valuation v
 join {{ ref('dim_company') }} c on v.company_sk = c.company_sk
-where v.trade_date = (select max(trade_date) from {{ ref('fact_daily_market_valuation') }})
 group by c.industry

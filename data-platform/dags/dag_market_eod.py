@@ -37,8 +37,11 @@ PRICE_LOOKBACK_DAYS = 7
 
 # dbt runs from its own virtual environment (see Dockerfile). Build artefacts go to /tmp
 # because the project directory is a bind mount owned by the host user.
+# Source freshness runs first: if a load silently wrote nothing and the raw data is older
+# than the limits in sources.yml, the task fails before any model is rebuilt on stale data.
 DBT_COMMAND = (
     "cd /opt/airflow/dbt_afive && "
+    "/opt/airflow/dbt_venv/bin/dbt source freshness --profiles-dir . && "
     "/opt/airflow/dbt_venv/bin/dbt build --profiles-dir . {flags}"
 )
 DBT_ENV = {
