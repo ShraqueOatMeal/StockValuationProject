@@ -31,7 +31,7 @@ PROFILE_FIELDS = (
 def fetch_and_store_fundamentals(ticker: str) -> int:
     """
     Pulls quarterly and annual income statement, balance sheet and cash flow data,
-    plus the company profile, from Yahoo Finance and upserts into bronze.raw_yf_fundamentals.
+    plus the company profile and stock split history, from Yahoo Finance and upserts into bronze.raw_yf_fundamentals.
     """
     print(f"Fetching fundamentals for: {ticker}")
     stock = yf.Ticker(ticker)
@@ -81,6 +81,12 @@ def fetch_and_store_fundamentals(ticker: str) -> int:
             if profile:
                 cursor.execute(insert_sql, (ticker.upper(), 'profile', 'latest', json.dumps(profile)))
                 stored += 1
+
+            # Full stock split history ({ "<ex-date>": ratio }), used to put share counts
+            # reported before a split on today's share basis
+            splits = {day.strftime("%Y-%m-%d"): float(ratio) for day, ratio in stock.splits.items() if ratio > 0}
+            cursor.execute(insert_sql, (ticker.upper(), 'splits', 'latest', json.dumps(splits)))
+            stored += 1
         conn.commit()
     finally:
         conn.close()

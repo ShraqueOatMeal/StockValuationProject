@@ -5,6 +5,21 @@ with prices as (
 ),
 
 
+-- Dates to recalculate: from the earliest price re-ingested since the last run, and at
+-- least the trailing lookback window so a newly filed quarter reaches recent dates.
+-- Restated history and changed assumptions need a full refresh (run weekly).
+refresh_window as (
+    select
+        least(
+            (
+                select min(trade_date)
+                from prices
+                where updated_at > (select coalesce(max(calculated_at), '1900-01-01') from "afive_dw"."gold"."fact_daily_market_valuation")
+            ),
+            (select max(trade_date) from "afive_dw"."gold"."fact_daily_market_valuation") - 10
+        ) as from_date
+),
+
 
 financials as (
     select * from "afive_dw"."gold"."fact_quarterly_financials"
@@ -192,6 +207,8 @@ joined as (
         order by f.filing_date desc, f.period_end_date desc
         limit 1
     ) f on true
+    
+    where p.trade_date >= (select from_date from refresh_window)
     
 )
 

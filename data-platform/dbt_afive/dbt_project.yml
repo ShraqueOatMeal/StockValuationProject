@@ -41,3 +41,8 @@ models:
     gold:
       +materialized: table
       +schema: gold
+    # Pipeline monitoring models. They report on the pipeline rather than on companies,
+    # so they sit outside the bronze / silver / gold layers.
+    ops:
+      +materialized: table
+      +schema: ops

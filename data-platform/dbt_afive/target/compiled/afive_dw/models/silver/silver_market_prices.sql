@@ -5,6 +5,15 @@ with staged as (
 ),
 
 
+-- Earliest trade date ingested since the last run. Everything from that date onwards is
+-- recalculated, because returns and moving averages depend on the rows before them; a
+-- backfill of old history therefore widens the window on its own.
+changed as (
+    select min(trade_date) as from_date
+    from staged
+    where ingested_at > (select coalesce(max(updated_at), '1900-01-01') from "afive_dw"."silver"."silver_market_prices")
+),
+
 
 enriched as (
     select
@@ -40,6 +49,11 @@ enriched as (
         ingested_at as updated_at
     from staged
     
+    -- 100 calendar days of earlier history so the 50-day average is complete at the cutoff
+    where trade_date >= (select from_date from changed) - 100
+    
 )
 
 select * from enriched
+
+where trade_date >= (select from_date from changed)

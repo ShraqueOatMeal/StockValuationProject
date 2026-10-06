@@ -1,5 +1,4 @@
-import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
+import { Head, setLayoutProps } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import {
@@ -76,8 +75,11 @@ export default function Dashboard({ auth, watchlist }: DashboardProps) {
         return `${prefix}${inBillions.toFixed(2)}B`;
     };
 
+    // AppLayout is applied to every page in app.tsx; wrapping again nests two shells
+    setLayoutProps({ breadcrumbs });
+
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
+        <>
             <Head title="Valuation Dashboard" />
 
             <div className="py-12">
@@ -188,6 +190,6 @@ export default function Dashboard({ auth, watchlist }: DashboardProps) {
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </>
     );
 }
