@@ -392,6 +392,19 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
         company.current_price,
     ]);
 
+    // Memoized so the chart keeps the same data reference across re-renders; otherwise
+    // every slider move or layout change would make Recharts recalculate all its marks
+    const performanceChartData = useMemo(
+        () =>
+            historical.map((h) => ({
+                period: h.period,
+                Revenue: Number((h.revenue / 1e9).toFixed(2)),
+                'Net Income': Number((h.net_income / 1e9).toFixed(2)),
+                'Free Cash Flow': Number((h.free_cash_flow / 1e9).toFixed(2)),
+            })),
+        [historical]
+    );
+
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
@@ -514,14 +527,11 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
                     </CardHeader>
                     <CardContent>
                         <div className="h-[360px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                            {/* Debounced: the chart redraws once after the sidebar finishes animating rather
+                                than on every frame of the width change, which made the toggle stutter */}
+                            <ResponsiveContainer width="100%" height="100%" debounce={250}>
                                 <ComposedChart
-                                    data={historical.map((h) => ({
-                                        period: h.period,
-                                        Revenue: Number((h.revenue / 1e9).toFixed(2)),
-                                        'Net Income': Number((h.net_income / 1e9).toFixed(2)),
-                                        'Free Cash Flow': Number((h.free_cash_flow / 1e9).toFixed(2)),
-                                    }))}
+                                    data={performanceChartData}
                                     margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
                                 >
                                     <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -529,14 +539,17 @@ export default function CompanyShow({ company, historical, dcf_models, maintenan
                                     <YAxis tickFormatter={(val) => `$${val}B`} tick={{ fontSize: 12 }} />
                                     <Tooltip formatter={(value: number | string | undefined) => [`$${value ?? 0}B`]} />
                                     <Legend />
-                                    <Bar dataKey="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="Net Income" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                    {/* Entrance animations are off: they replay on every resize and
+                                        re-render all the marks for over a second each time */}
+                                    <Bar dataKey="Revenue" fill="#3b82f6" radius={[4, 4, 0, 0]} isAnimationActive={false} />
+                                    <Bar dataKey="Net Income" fill="#10b981" radius={[4, 4, 0, 0]} isAnimationActive={false} />
                                     <Line
                                         type="monotone"
                                         dataKey="Free Cash Flow"
                                         stroke="#8b5cf6"
                                         strokeWidth={3}
                                         dot={{ r: 4 }}
+                                        isAnimationActive={false}
                                     />
                                 </ComposedChart>
                             </ResponsiveContainer>
